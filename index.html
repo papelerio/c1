@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Apoyo y Retiro</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
+        
+        .master-controls { 
+            background: #fff; padding: 20px; border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 30px;
+            max-width: 600px; margin-left: auto; margin-right: auto;
+        }
+
+        .slider-container { margin-bottom: 20px; text-align: center; }
+        label { font-weight: bold; font-size: 1.1em; display: block; margin-bottom: 10px; }
+        input[type="range"] { width: 100%; cursor: pointer; height: 8px; border-radius: 5px; }
+
+        .btn-add { 
+            background: #007bff; color: white; border: none; padding: 12px; 
+            cursor: pointer; border-radius: 8px; font-weight: bold; width: 100%; 
+            font-size: 1em; transition: background 0.2s;
+        }
+        .btn-add:hover { background: #0056b3; }
+
+        /* Contenedor corregido: añade a la derecha y abajo */
+        .grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 20px; 
+            justify-content: flex-start; /* Alinea al inicio (izquierda) */
+        }
+
+        .card { 
+            background: white; padding: 20px; border-radius: 10px; 
+            width: 280px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+            position: relative; border-top: 5px solid #007bff;
+        }
+
+        .card input { 
+            width: 100%; padding: 10px; margin: 10px 0; 
+            border: 1px solid #ddd; border-radius: 6px; 
+            box-sizing: border-box; font-size: 1.2em; text-align: center;
+        }
+
+        .results { margin-top: 15px; }
+        .results p { 
+            margin: 10px 0; font-size: 0.95em; 
+            display: flex; justify-content: space-between;
+            border-bottom: 1px inset #f9f9f9; padding-bottom: 4px;
+        }
+        .results b { color: #2c3e50; }
+
+        .btn-del { 
+            position: absolute; top: -10px; right: -10px; background: #ff4757; 
+            color: white; border: none; border-radius: 50%; width: 26px; height: 26px; 
+            cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="master-controls">
+        <div class="slider-container">
+            <label>Distribución: <span id="percentLabel">70</span>% / <span id="restLabel">30</span>%</label>
+            <input type="range" id="masterSlider" min="0" max="100" step="10" value="70" oninput="updateMasterPercent(this.value)">
+        </div>
+        <button class="btn-add" onclick="addVignette()">+ Nueva Viñeta</button>
+    </div>
+
+    <div id="vignetteContainer" class="grid"></div>
+
+    <script>
+        let vignettes = JSON.parse(localStorage.getItem('vignettes')) || [];
+        let masterPercent = parseInt(localStorage.getItem('masterPercent')) || 70;
+
+        // Inicialización
+        document.getElementById('masterSlider').value = masterPercent;
+        updateLabels(masterPercent);
+
+        function updateLabels(val) {
+            document.getElementById('percentLabel').innerText = val;
+            document.getElementById('restLabel').innerText = 100 - val;
+        }
+
+        function saveAll() {
+            localStorage.setItem('vignettes', JSON.stringify(vignettes));
+            localStorage.setItem('masterPercent', masterPercent);
+        }
+
+        function updateMasterPercent(val) {
+            masterPercent = parseInt(val);
+            updateLabels(val);
+            saveAll();
+            refreshAllCards();
+        }
+
+        function calculate(val) {
+            const v0 = parseFloat(val) || 0;
+            const p1 = masterPercent / 100;
+            const p2 = (100 - masterPercent) / 100;
+
+            const v1 = v0 * p1;
+            const v2 = v0 * p2;
+            const v3 = v1 / 2;
+
+            return { 
+                v1: v1.toFixed(2), 
+                v2: v2.toFixed(2), 
+                v3: v3.toFixed(2) 
+            };
+        }
+
+        function refreshAllCards() {
+            vignettes.forEach(v => {
+                const res = calculate(v.val);
+                document.getElementById(`v1-${v.id}`).innerText = res.v1;
+                document.getElementById(`v2-${v.id}`).innerText = res.v2;
+                document.getElementById(`v3-${v.id}`).innerText = res.v3;
+                document.getElementById(`lab1-${v.id}`).innerText = masterPercent;
+                document.getElementById(`lab2-${v.id}`).innerText = (100 - masterPercent);
+            });
+        }
+
+        function updateValue(id, value) {
+            const index = vignettes.findIndex(v => v.id === id);
+            vignettes[index].val = value;
+            const res = calculate(value);
+            
+            document.getElementById(`v1-${id}`).innerText = res.v1;
+            document.getElementById(`v2-${id}`).innerText = res.v2;
+            document.getElementById(`v3-${id}`).innerText = res.v3;
+            saveAll();
+        }
+
+        function addVignette(val = "") {
+            const id = Date.now();
+            const newObj = { id, val };
+            if (val === "") {
+                vignettes.push(newObj);
+                saveAll();
+            }
+            renderVignette(id, val);
+        }
+
+        function deleteVignette(id) {
+            vignettes = vignettes.filter(v => v.id !== id);
+            const el = document.getElementById(`card-${id}`);
+            if(el) el.remove();
+            saveAll();
+        }
+
+        function renderVignette(id, initialVal) {
+            const res = calculate(initialVal);
+            const container = document.getElementById('vignetteContainer');
+            
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.id = `card-${id}`;
+            card.innerHTML = `
+                <button class="btn-del" onclick="deleteVignette(${id})">×</button>
+                <label style="font-size: 0.8em; color: #888;">Ingresar Valor (Dato 0)</label>
+                <input type="number" placeholder="0.00" value="${initialVal}" oninput="updateValue(${id}, this.value)">
+                <div class="results">
+                    <p>Apoyo máximo (<span id="lab1-${id}">${masterPercent}</span>%): <b id="v1-${id}">${res.v1}</b></p>
+                    <p>Retiro mínimo (<span id="lab2-${id}">${100-masterPercent}</span>%): <b id="v2-${id}">${res.v2}</b></p>
+                    <p>Mitad de Apoyo: <b id="v3-${id}">${res.v3}</b></p>
+                </div>
+            `;
+            // .appendChild asegura que se agregue al final (derecha)
+            container.appendChild(card);
+        }
+
+        // Carga inicial
+        vignettes.forEach(v => renderVignette(v.id, v.val));
+    </script>
+</body>
+</html>
