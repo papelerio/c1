@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -20,11 +21,14 @@
         .input-group { display: flex; gap: 8px; margin-bottom: 10px; }
         .input-group div { flex: 1; }
         .input-group label { font-size: 0.7rem; color: #888; display: block; text-transform: uppercase; margin-bottom: 2px; }
-        input { width: 100%; padding: 10px; border: 2px solid #eee; border-radius: 8px; outline: none; font-size: 1rem; }
-        input:focus { border-color: var(--p); }
+        input, textarea { width: 100%; padding: 10px; border: 2px solid #eee; border-radius: 8px; outline: none; font-size: 1rem; font-family: monospace; }
+        input:focus, textarea:focus { border-color: var(--p); }
+        textarea { resize: vertical; min-height: 80px; font-family: monospace; }
         
         .res-item { display: flex; justify-content: space-between; font-size: 0.95rem; padding: 8px 0; border-bottom: 1px dashed #eee; }
         .res-item b { color: var(--p); }
+        .resultado-especial { background: #f0f9ff; padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center; font-weight: bold; }
+        .resultado-especial b { font-size: 1.2rem; color: #2c3e50; }
 
         /* Botones Flotantes */
         .fab-container { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 12px; z-index: 99; }
@@ -43,6 +47,8 @@
         .field-row input { background: white; border-width: 1px; padding: 6px; }
         .field-row .i-l { flex: 1.2; }
         .field-row .i-f { flex: 2; font-family: monospace; }
+        
+        .plantilla-especial-badge { background: #1a1a1a; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; margin-left: 8px; }
     </style>
 </head>
 <body>
@@ -101,36 +107,124 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // PLANTILLA ESPECIAL (no editable, no eliminable)
+        const PLANTILLA_ESPECIAL = {
+            id: -1,
+            n: '🧮 Calculadora Rápida',
+            c: '#1a1a1a',
+            useY: false,
+            useZ: false,
+            esEspecial: true,
+            f: [{ l: 'Resultado', f: 'expresion' }]
+        };
+
         let templates = JSON.parse(localStorage.getItem('t')) || [];
+        if (!templates.some(t => t.id === -1)) {
+            templates.unshift(PLANTILLA_ESPECIAL);
+        }
+        
         let vignettes = JSON.parse(localStorage.getItem('v')) || [];
 
         const openM = id => { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); document.getElementById(id).style.display='block'; if(id=='mTemplates') renderT(); };
         const closeM = () => document.querySelectorAll('.modal').forEach(m=>m.style.display='none');
 
+        function evaluarExpresion(expresion) {
+            try {
+                let limpia = expresion.replace(/\s/g, '');
+                if (!/^[0-9+\-*/().]+$/.test(limpia)) {
+                    throw new Error('Caracteres no permitidos');
+                }
+                const resultado = eval(limpia);
+                if (isNaN(resultado) || !isFinite(resultado)) {
+                    throw new Error('Resultado inválido');
+                }
+                return resultado.toFixed(4);
+            } catch (e) {
+                return 'Error en expresión';
+            }
+        }
+
+        function actualizarResultadoEspecial(id) {
+            const v = vignettes.find(x => x.id == id);
+            if (v) {
+                const resultado = evaluarExpresion(v.expresion || '');
+                const resultadoSpan = document.getElementById(`res-especial-${id}`);
+                if (resultadoSpan) {
+                    resultadoSpan.textContent = resultado;
+                }
+            }
+        }
+
+        function updValEspecial(id, expresion) {
+            const v = vignettes.find(x => x.id == id);
+            v.expresion = expresion;
+            localStorage.setItem('v', JSON.stringify(vignettes));
+            actualizarResultadoEspecial(id);
+        }
+
         function renderV() {
             const cont = document.getElementById('vignettesContainer');
             cont.innerHTML = vignettes.length ? '' : '<p style="text-align:center;width:100%;color:#888;margin-top:40px">Sin viñetas. Toca 📄 para empezar.</p>';
+            
             vignettes.forEach(v => {
                 const t = templates.find(temp => temp.id == v.tId);
                 if (!t) return;
                 
-                let inpHtml = `<div><label>X</label><input type="number" value="${v.x}" oninput="updVal(${v.id},'x',this.value)"></div>`;
-                if(t.useY) inpHtml += `<div><label>Y</label><input type="number" value="${v.y||0}" oninput="updVal(${v.id},'y',this.value)"></div>`;
-                if(t.useZ) inpHtml += `<div><label>Z</label><input type="number" value="${v.z||0}" oninput="updVal(${v.id},'z',this.value)"></div>`;
+                if (t.esEspecial) {
+                    const expresionActual = (v.expresion || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    const resultado = evaluarExpresion(v.expresion || '');
+                    
+                    cont.innerHTML += `
+                        <div class="card" id="card-especial-${v.id}">
+                            <div class="card-h" style="background:${t.c}; color:white">
+                                <span>${t.n} <span class="plantilla-especial-badge">EXP自由</span></span>
+                                <span onclick="delV(${v.id})" style="font-size:1.5rem; cursor:pointer">&times;</span>
+                            </div>
+                            <div class="card-b">
+                                <div class="input-group">
+                                    <div style="flex:1">
+                                        <label>📐 Expresión Matemática</label>
+                                        <textarea id="textarea-${v.id}" placeholder="Ej: (145.163*5)+(220.512*3)+276.516">${expresionActual}</textarea>
+                                        <small style="color:#666; display:block; margin-top:5px">✅ Soporta: + - * / ( ) . y espacios</small>
+                                    </div>
+                                </div>
+                                <div class="resultado-especial">
+                                    🟰 <b id="res-especial-${v.id}">${resultado}</b>
+                                </div>
+                            </div>
+                        </div>`;
+                } else {
+                    let inpHtml = `<div><label>X</label><input type="number" id="x-${v.id}" value="${v.x}" oninput="updVal(${v.id},'x',this.value)"></div>`;
+                    if(t.useY) inpHtml += `<div><label>Y</label><input type="number" id="y-${v.id}" value="${v.y||0}" oninput="updVal(${v.id},'y',this.value)"></div>`;
+                    if(t.useZ) inpHtml += `<div><label>Z</label><input type="number" id="z-${v.id}" value="${v.z||0}" oninput="updVal(${v.id},'z',this.value)"></div>`;
 
-                let resHtml = t.f.map((f, i) => `<div class="res-item"><span>${f.l}:</span><b id="r-${v.id}-${i}">${evalF(f.f, v.x, v.y, v.z)}</b></div>`).join('');
+                    let resHtml = t.f.map((f, i) => `<div class="res-item"><span>${f.l}:</span><b id="r-${v.id}-${i}">${evalF(f.f, v.x, v.y, v.z)}</b></div>`).join('');
 
-                cont.innerHTML += `
-                    <div class="card">
-                        <div class="card-h" style="background:${t.c}; color:${isDark(t.c)?'#fff':'#222'}">
-                            <span>${t.n}</span>
-                            <span onclick="delV(${v.id})" style="font-size:1.5rem; cursor:pointer">&times;</span>
-                        </div>
-                        <div class="card-b">
-                            <div class="input-group">${inpHtml}</div>
-                            <div>${resHtml}</div>
-                        </div>
-                    </div>`;
+                    cont.innerHTML += `
+                        <div class="card">
+                            <div class="card-h" style="background:${t.c}; color:${isDark(t.c)?'#fff':'#222'}">
+                                <span>${t.n}</span>
+                                <span onclick="delV(${v.id})" style="font-size:1.5rem; cursor:pointer">&times;</span>
+                            </div>
+                            <div class="card-b">
+                                <div class="input-group">${inpHtml}</div>
+                                <div>${resHtml}</div>
+                            </div>
+                        </div>`;
+                }
+            });
+
+            // Después de renderizar, agregar los event listeners a los textareas especiales
+            vignettes.forEach(v => {
+                const t = templates.find(temp => temp.id == v.tId);
+                if (t && t.esEspecial) {
+                    const textarea = document.getElementById(`textarea-${v.id}`);
+                    if (textarea) {
+                        textarea.addEventListener('input', function(e) {
+                            updValEspecial(v.id, this.value);
+                        });
+                    }
+                }
             });
         }
 
@@ -146,14 +240,32 @@
         }
 
         function renderT() {
-            document.getElementById('listT').innerHTML = templates.map(t => `
-                <div class="t-tag" style="background:${t.c}">
-                    <span onclick="spawnV(${t.id})" style="flex:1; cursor:pointer">📄 ${t.n}</span>
-                    <button onclick="editT(${t.id})" style="background:none; border:none; color:inherit; font-size:1.3rem; cursor:pointer">✎</button>
-                </div>`).join('');
+            const listT = document.getElementById('listT');
+            listT.innerHTML = '';
+            
+            templates.forEach(t => {
+                if (t.esEspecial) {
+                    listT.innerHTML += `
+                        <div class="t-tag" style="background:${t.c}; opacity:0.9">
+                            <span onclick="spawnV(${t.id})" style="flex:1; cursor:pointer">⭐ ${t.n}</span>
+                            <span style="font-size:0.8rem; opacity:0.7">🔒 Especial</span>
+                        </div>`;
+                } else {
+                    listT.innerHTML += `
+                        <div class="t-tag" style="background:${t.c}">
+                            <span onclick="spawnV(${t.id})" style="flex:1; cursor:pointer">📄 ${t.n}</span>
+                            <button onclick="editT(${t.id})" style="background:none; border:none; color:inherit; font-size:1.3rem; cursor:pointer">✎</button>
+                        </div>`;
+                }
+            });
         }
 
         function editT(id=null) {
+            if (id === -1) {
+                alert('❌ La plantilla especial no se puede editar');
+                return;
+            }
+            
             openM('mEdit');
             const t = templates.find(x => x.id == id) || { id:'', n:'', c:'#4a90e2', useY:false, useZ:false, f:[{l:'', f:''}] };
             document.getElementById('edId').value = t.id;
@@ -161,12 +273,12 @@
             document.getElementById('edColor').value = t.c;
             document.getElementById('useY').checked = t.useY;
             document.getElementById('useZ').checked = t.useZ;
-            document.getElementById('btnDel').style.display = id ? 'block' : 'none';
+            document.getElementById('btnDel').style.display = (id && id !== -1) ? 'block' : 'none';
             
             const fCont = document.getElementById('edFields');
             fCont.innerHTML = '<p style="font-size:0.8rem; margin-bottom:5px; font-weight:bold">Fórmulas de Resultado:</p>';
             
-            t.f.forEach(f => addF(f.l, f.f));
+            (t.f || []).forEach(f => addF(f.l, f.f));
             
             const btnAdd = document.createElement('button');
             btnAdd.className = 'btn';
@@ -179,8 +291,8 @@
             const div = document.createElement('div');
             div.className = 'field-row';
             div.innerHTML = `
-                <input placeholder="Etiqueta" class="i-l" value="${l}">
-                <input placeholder="Fórmula" class="i-f" value="${f}">
+                <input placeholder="Etiqueta" class="i-l" value="${l.replace(/"/g, '&quot;')}">
+                <input placeholder="Fórmula" class="i-f" value="${f.replace(/"/g, '&quot;')}">
                 <button onclick="this.parentElement.remove()" style="border:none; background:none; color:red; font-size:1.2rem">&times;</button>
             `;
             const fCont = document.getElementById('edFields');
@@ -189,6 +301,12 @@
 
         function saveT() {
             const id = document.getElementById('edId').value || Date.now();
+            
+            if (parseInt(id) === -1) {
+                alert('❌ No se puede modificar la plantilla especial');
+                return;
+            }
+            
             const fieldRows = Array.from(document.querySelectorAll('.field-row'));
             
             const nt = {
@@ -211,18 +329,70 @@
             openM('mTemplates');
         }
 
-        const spawnV = id => { vignettes.push({id:Date.now(), tId:id, x:0, y:0, z:0}); localStorage.setItem('v', JSON.stringify(vignettes)); renderV(); closeM(); };
-        const delV = id => { if(confirm('¿Eliminar esta viñeta?')) { vignettes = vignettes.filter(x=>x.id!=id); localStorage.setItem('v', JSON.stringify(vignettes)); renderV(); }};
-        const evalF = (f, x, y, z) => { try { return eval(f.replace(/x/g,`(${x})`).replace(/y/g,`(${y||0})`).replace(/z/g,`(${z||0})`)).toFixed(2); } catch { return '...'; }};
-        const isDark = h => { let r=parseInt(h.slice(1,3),16), g=parseInt(h.slice(3,5),16), b=parseInt(h.slice(5,7),16); return (r*299+g*587+b*114)/1000 < 128; };
-        const delT = () => { if(confirm('¿Borrar plantilla?')){ templates=templates.filter(x=>x.id!=document.getElementById('edId').value); localStorage.setItem('t', JSON.stringify(templates)); openM('mTemplates'); } };
+        const spawnV = id => { 
+            const nuevaViñeta = {id:Date.now(), tId:id, x:0, y:0, z:0};
+            
+            if (id === -1) {
+                nuevaViñeta.expresion = '';
+            }
+            
+            vignettes.push(nuevaViñeta); 
+            localStorage.setItem('v', JSON.stringify(vignettes)); 
+            renderV(); 
+            closeM(); 
+        };
+        
+        const delV = id => { 
+            if(confirm('¿Eliminar esta viñeta?')) { 
+                vignettes = vignettes.filter(x=>x.id!=id); 
+                localStorage.setItem('v', JSON.stringify(vignettes)); 
+                renderV(); 
+            }
+        };
+        
+        const evalF = (f, x, y, z) => { 
+            try { 
+                return eval(f.replace(/x/g,`(${x})`).replace(/y/g,`(${y||0})`).replace(/z/g,`(${z||0})`)).toFixed(2); 
+            } catch { 
+                return '...'; 
+            }
+        };
+        
+        const isDark = h => { 
+            let r=parseInt(h.slice(1,3),16), g=parseInt(h.slice(3,5),16), b=parseInt(h.slice(5,7),16); 
+            return (r*299+g*587+b*114)/1000 < 128; 
+        };
+        
+        const delT = () => { 
+            const id = parseInt(document.getElementById('edId').value);
+            if (id === -1) {
+                alert('❌ No se puede eliminar la plantilla especial');
+                return;
+            }
+            if(confirm('¿Borrar plantilla?')){ 
+                templates=templates.filter(x=>x.id!=id); 
+                localStorage.setItem('t', JSON.stringify(templates)); 
+                openM('mTemplates'); 
+            } 
+        };
 
         async function fbSync(mode) {
             try {
-                if(mode=='up') await db.ref('plantillas').set(templates);
-                else { const s = await db.ref('plantillas').once('value'); templates = Object.values(s.val() || {}); localStorage.setItem('t', JSON.stringify(templates)); }
-                alert('Sincronización exitosa'); renderV(); closeM();
-            } catch(e) { alert('Error: ' + e.message); }
+                const templatesToSync = templates.filter(t => !t.esEspecial);
+                
+                if(mode=='up') await db.ref('plantillas').set(templatesToSync);
+                else { 
+                    const s = await db.ref('plantillas').once('value'); 
+                    const loadedTemplates = Object.values(s.val() || {});
+                    templates = [PLANTILLA_ESPECIAL, ...loadedTemplates];
+                    localStorage.setItem('t', JSON.stringify(templates)); 
+                }
+                alert('✅ Sincronización exitosa'); 
+                renderV(); 
+                closeM();
+            } catch(e) { 
+                alert('❌ Error: ' + e.message); 
+            }
         }
 
         renderV();
