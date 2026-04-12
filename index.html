@@ -1,113 +1,388 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora Pro Móvil</title>
+    <link rel="icon" href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAAyADIDAREAAhEBAxEB/8QAHQAAAgICAwEAAAAAAAAAAAAACAkGBwAFAgMKBP/EAC4QAAICAgIBBAECBAcAAAAAAAIDAQQFBgcREgAIEyEUIjEVMkFRFyMkUmFx0f/EABwBAQACAgMBAAAAAAAAAAAAAAcFBgAEAQIIA//EADYRAAIBAwMCBAQEBAcBAAAAAAECAwQFEQASIQYxEyJBURQyYXEHQlJiJDOB0RUWQ3KRscHw/9oADAMBAAIRAxEAPwDwJ4PB5jZcxjNe1/GXcznM1erY3E4nG12W7+Qv22imtUqVkiTHOc0xAAEZmZnueoiZjvHG8rpFEjSSSMEREBZnZjhVVRkkknAA766u6Ro0kjKiIpZ3YhVVVGWZmOAAAMkngDTieFPYdxtx1SRnfcDBcg701a3K4zxGQZQ1XWiIfOFbPnaLSs57JRBD8tDHFWoVJE1MZf8AkFyVGxdCRBUqLyWd2UMtHGxVEz6TSDl2/ahVR6l88Hl46wly0NrARVJVqlwGZ+R/KjYDavfzMCx/SuOTu1bZg0WsFLjfV9M45oiErGvpmqYjDsMfH45mzfVWLIX2kuPBli7ae5sR0ZEPQwgUlst9GAtLR08GAT5IkDE9sM+N7ZzyWYk/8ao9Rc6ypfNVUzzDjIaV8AftXO0YJ7KMYzwPTZZvfc3tFU8buNTX93xZwam4rcdawuw45gFM+QzWyNJoBE/zeS/E4LohOD6mPrPRUtSPDqaWnmRsDbJCjjsBxuU4Iz3HY9tcR1tTTkPTTTQKB3jldSx+oUjjHHPtzoOeWPZhwLzBQsO0TH1OD+SjmTpNoPtWONM5YMp6qZTE2Tfa1uHH2CbuLcSKkn5vq3FQClUi8dC0NUrSW3+CqOSEJZqaQjkqy+ZoyeytGdoJ5Q99Wy09X1sDBK/NXT8DcAoqE45YMMLIBwSrgE+j8cpj5K413LiTcsxoe+Yd2F2PCuELNZkixFhDRhlW/QtLmU3cfdTIvqW0ES2rL9xMTASarpKihqJKWqiaKaI4dG+oyrKezKwIZWHBBzpKpaqCsgSoppBLFIMqw9/VSDyGU8Mp5B41BPWtrY03z2M8VUuO9ELnLLpU3eN5/Ow/Hq3pEp17WqptpZvYESfcDkc04/wqboGJrUkySTZN6wCVLoWyIsRvFQoMjs0dIpGfDQZWSb6tIcohHyqjEZLDB71ddGeQWyFiI0AaqIxl2YBki/2ovmYfmZgCBs5MZVomHLGHJMKSOSOZIjMpmSIzmZIimfspmfvvvvuftMDA55PGPoP7c/Xk6oLpyARkc85Pbn09/fHbA0dmhcY8Oce8HY/m/nitlNhsbyWSx/H2l0cldxdGPjfepU8tkX4nrLWshbt0Ldqhj1PTRXi6xXshDFM6QgWXpu3CxzdQX+t+CojmKjjVJJZqiobxfBjjijKMzP4UkhPiLHHEhdye2iG/dS9Q3Hqn/KvSKRRvQmKS618sUchC7Y5J4UMxMUUcSSRo7mN5XmcRxgYOYTw3x/juY8krRMfkKWLwC8bG/wC9ZeMEp+xauOBk8EWMxWYtx8uUXnpyIXFYpRLqhbsJYwXDiDIx3rnqSDpazw1tJH/iFfWSR0tNRtuiCVb+J/NmyQ0EaIZZGQcbkizuIOpPrXqiPoi3yX6tR56nxHtttpBUstLWmdfiTLLTxnKNTLCUaTBlZRtXBnB1WHK/+CFDY9jx3GuW2S/jMRj8NRw9u9aG+zK55V+0jY35CzXwdfHnWXVBDK0451OiTSkaz7gkfwxnTVw6sqaSimvlNRLNU1NS9QKeJoBT0bRRtRrHG9S8niGQuHMqyPsGSqHBbd6NufWdytturL/aYKOWuqqySeEiOE0tuMEMlvZYfipJ0kld3DpKJJo1XMqI2Mhl7l+MA9wfE2RrqrJfydxhi7uwaXkIVH5uY1yksred05zgEm2TNIMt4NTCOAyXiiPiXYc2O3WNkW5UDVUKA1lGjSoQPNJAMtJD6E4ALx5HzDaAN2mnpq6tQViwSu3wlUyoyk+WOVsKkvPYZwsh48vmOdowiP8Ab9/QppV16Gr9Cpqadb0qiQTjtL1jXtWp/F9iyMZj0LsWYkYGCZctE601niEtY4iKImfr0Tb4Y6OlpaMEfw9PFH8uAWVPM2fdmyzZwM4OM6EKudqqqqZ2JzNNLJgkcKXJVfYBVwO/p9NbXG0sxaLH16eJvvPLtlGKAKdk5yLYmQNVGYHxtmJTAkKJORmep66H1NU9JVVc1PBTU81TNUuEpoo43Z53PAWJcec5HZQeRzgk6jJqukgSaaaogjjplL1DPIgWBcctMc+QY/VgHTDPcdSs6z7TvbNqGwK/E2wcybq2HYXyXJxlLBZFVl4LAiZILyubTQCevF1gHfBLAiDlN61hez9KdO2WqKR1cHhVVXCGyYXWmqBIr/lzGJUR2yQGLDOQQBjoSSKu696zvNMd9uljmxUHiNmkqqbaQxAABipZJQOCFKsR5tQn2b7JR13kLeNY2BjcRa2nTZq1F3EurGRLsEQD4N6b5T+bXsgIDLGpEmrEhCZ9ed+tLXJfLQ09vEdTLbi1WixyI2RDJEajY2cFliV88jsc4AOob8e4JKqy9N3OkQVdFQX1zVPTlZVXxYgE3FCy4LQvE27hXZVJBfkTr/G/IOH2AdIv6fm6ezRWbYVhWULCrT6lZNmyy9WE4GbNIqtK3ZXaCZU2uhrgIhGZidjvtoej+Pjr6RqRJFjedJkkjSVmjQRO0ZcI4eSNGXPDso4Om6j6kslba0vNPcaZrcwjHj+IAsbSNGixSKPNHKryojxsoZHYKwBxmFYHMFjdixdif5F3EpsB3MiyrYmK1tJxM9TDaznBMfUR3E/U+t93VvL+vAZcEZVu+eCO3Jyc/wDk6pB2lSdxIK4444wfQg5I+300nDkriQsXyNv+MpVrP4eO3XaqFT4llKvxqmdv10fHIh1K/iWHhMfXj119egOutxirayJd22KqqI1wpxhJXUYwMdh6aZKSuWSlppCRmSnhc575aNWOefrptGx5lGSyq8zRb50M7RxWYxrPKCh1HIUq9iq4TiYgxNBCXmERBfUxMfUem2KRZ4YJk5SaCORcnOVdAwP1z/1x3ByTSUwjklic7JInkiK4PzI7KfTn5SfT0GpJrvLm66vc0vIY3J0bLeO8i7K6jSyuNpXcdjrFm1N62LUStLLqbdyPncq250Qye1SHqwUF/r6Ca2zQSxhrRKZqBWhQCJ2bfIMx7XcSHkh3P7cdtQNw6ettdDc6eaNwt4hENe0U0iyTIieEm0ncqMkflUooxgA5I0ZfuhyeX3rhjg7nrbcg63u23sjFWSJ3xVBxDaF/IopUqlaUVqVKlkMZb/GXUWpkrty1pnYljZUfxCMN26V6Z6mWBKerrStJUhRuRzNTT1Eg827cBJE5XJJAfbyOCWdBAW3qnqvpOmytvooWmhJUFxIk0MBd2bdvd4Z0Lhtw3x4+U62nskyI7Vy/yTyztUpzmzaNplnOa2myEPr0s9eavF0r6FONolGBwtOzVxlaxDQA21nEcsrCXrx9+JbTUFhtFgt7vSUdwuPw9bJDIySPRqrPLAzpg7aqeZWnIPmUMnZ9Qf4zVDdOdHWLpq0nwILtc/gpJW8zMkKiZvEwAN0tTMksrKFJKsoAViug25F5333lnbMtvW2ZJbctmKiaC5WbGnQxqbDG1a1ew9htS5S2mhlitFeGpYahUtLCV6u1i6ct9gtkNto4z8PFKZmHCrLM6hZGdFAVlJVWAbdh1ViSyghW6V6JtfS1npbRSS1VWsU71k81XKXM9TNGqzMygKvhbkWSOnKsqMEIyyg6rfGvbby2NQBTMtvVA7iZmYiXL8pme5/SI9kUl3+mJ7jqJj1Yc5YckY98HHB3Y55+578ZI1chGgDH5yoH2B5BwPfS6eS+bLU8jb/NLIJ/Dndtqmp2QlP4v8dv/B2UT0U/F4fcfU/vHoWuFwVq+tZWUhqupYHavIMzkH+o0rUVCFo6RWTzLTQK3fuIkB/L76v/ANufIdPfeLMdg22e9s44rjir6Gt/z7esfKwsNfrgXZORSCZx7vCZmqaYl0LXaqed06Ruq1VuFEz4qaEbQrd3py3kdMnnZnY/6cKcYI1VOpLe9NWtVIn8PWEMWHZJwMOG4wPE4ZeeTu/ToutaqcV5zI8e47M5vNapWu3F47kDLX7OKNCIdkLJzlMIx66yMbRr4eagGWVZag8jFgoJdclgKjZ6OzXOtstFPXNbBUTpT3Osq5YEpot0zbqiN22CCGKDbuaYuDLu5C40e3OqvVDSXeopqaC4SQwvNbKeKObxJCsK4gmVNzSyPMHI8IR4jK5BbJ0S/uB5Z443/Gcb8ZaEzLRw1xKmpjbm10K6sg87UY67QxsyVg8fTvW7TDvPuXAamoZ2JmuTYXMncvxR6nsUdns/R3SNVFdRaS1U9W8jCmqamKMUyRQSbPEmjhhklkkmjj2PK+EAGSpr0jZ75bK689QXSOlj6lv8bmjtU7vAXhFRFNVO6xrPJEExGsabXcBB4gBO4cOM+U+KuBuJNkzeA2lWw8r8k627GhgKj03iwbTi/Wqjkl1I6wyMfNsr1hN9x3LrvgBaoWETHmC+0V26pvNNSTUb09rttYHkq3VkjmjRkdxEZMmV5dioCqiNAGJJJ4qnVHT/AFt+I/X1Fba60ta+jelrqZUuEsUkC3CNWgllkgeY5q5J1i8CNoEWGJd7OxYkEF0vlYAPU/QxER9/fUx9R/1/ae//AFIZ9qjaQSO/9MZyO/rz29/XXpQgEj6dvt/9jn6aj2+chVOKtHzu8WpGcnNSziNSpEUQd7P5FDq1dwjMwRU8dBHcvSEj5VUPUo4sEHqGvV2Fst807FfHlRoaaMZG6SRcCTk5KxBi7Y7hQMjcDqUtNA9xq4ouRCjrLO2P9NDnZnsGc+UHvgk+mk1uc2w5th5k1z2Mc5hz2bGtKTYZT/UjMpIp/rMz6FiSSSTkkkknuSeST99KgAAAHAAwB7Aalmi7zsXHWyUNp1m2NbI0j6NTgltO/VOY/Ix99EEEup2gj42iBrcHcNruS8FuDZoq2ooKiOqpZDHLGcg91YequvZkYcMp7j2ODr4VVLDWwPT1CB43GD7qRyGU+jKcEH3HORplmg8t6RyvWGMVaRhNnlcsyOp5R4KdLIjtjsNZOFJydX6mZFP+pREEVmrXTKzNWtPUVDdFVGdaarwN1PI2FY85aBzhXH7M7wM+XaM6OrjY6u3tvVWqKYHyyouSq5OBKoBK47bvlJxggnAscwtVFnXYD0hMjJK/XCjIJmQL9M/Ezw8y6nsuvKfuPv1PFcsCdpwCAcZIBByAQOAx9QQO2odo4yyuyDeNyq5Ubl3DzAMRuG4gZ9WIGcga+ZYlLpJVczMp+5UBmUyX+6R7mOvv7mYiP69d+uSM/b1yB27nuPXj2xjPpz3btjPP1A749Bjnvjj+41otw3vT+OKM5LdMupLZHunrtNw2M9kziZjxRTBnmmvBdi+66U1FePxlYF5KBkTcrvbrUhaolSSY/JTQkPKxHbKqxEa8cs5APIGSca3aG01lwfEUZWIHzTuCka/QEjzN+1ckeuANLZ5b5bz/ACzn4yORmaOFx0Mra7gFHBVcTSKY8uyEAixesyIsuWzHzYfipfx1kpUBTdbrU3apaeclUGRDCDlIU9FHYFj+ZsZY+wAARbdbae2wCGEZZvNLKwG+V/dvYDsqjgD65Jqj1GakNZ6zWa5AZrMTAiAwITAwKRMDGYkSEomJEhmIkSiYmJiJie/Wdu2s799HZ7aNm2TKWxo5LYM3kaSq6yVTvZW/bqqKVv7ldexYYoJnxHuRCJ/TH9o9WiyVtYCEFXUhAThRPLtGMYwu/HH21X7rS0xAY08BYnlvBj3Hyt3O3OrK9yGdzeDxNb+CZnK4f53wl/8AC8hbx/zKmvYKVN/Ecn5FyQAUgfYyQjMx2MTG9eK2sVMLV1IDAZAnlAOVGcgPg59c61bXS0zHLU8DEDIJijJBwvIJXj+mlnWbVm447Nuw+1YbPkx9lrHuYX9za0iM5/5Ipn1SiSxJYlie5JJJ+5PJ1aQAoAUAAcAAAAD2AHA10euNc6z1ms1//9k=">
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-database-compat.js"></script>
+    
+    <!-- SortableJS para Drag and Drop móvil y desktop -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    
     <style>
-        :root { --p: #4a90e2; --bg: #f4f7f9; --txt: #2c3e50; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background: var(--bg); color: var(--txt); padding: 15px; padding-bottom: 90px; }
-        
-        /* Área de Trabajo */
-        .vignettes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .card-h { padding: 12px; display: flex; justify-content: space-between; font-weight: bold; align-items: center; }
-        .card-b { padding: 15px; }
-        
-        .input-group { display: flex; gap: 8px; margin-bottom: 10px; }
-        .input-group div { flex: 1; }
-        .input-group label { font-size: 0.7rem; color: #888; display: block; text-transform: uppercase; margin-bottom: 2px; }
-        input, textarea { width: 100%; padding: 10px; border: 2px solid #eee; border-radius: 8px; outline: none; font-size: 1rem; font-family: monospace; }
-        input:focus, textarea:focus { border-color: var(--p); }
-        textarea { resize: vertical; min-height: 80px; font-family: monospace; }
-        
-        .res-item { display: flex; justify-content: space-between; font-size: 0.95rem; padding: 8px 0; border-bottom: 1px dashed #eee; }
-        .res-item b { color: var(--p); }
-        .resultado-especial { background: #f0f9ff; padding: 12px; border-radius: 8px; margin-top: 10px; text-align: center; font-weight: bold; }
-        .resultado-especial b { font-size: 1.2rem; color: #2c3e50; }
+        /* =========================================
+           VARIABLES Y TIPOGRAFÍA
+           ========================================= */
+        :root { 
+            --primary: #4a90e2; 
+            --background: #f4f7f9; 
+            --text: #2c3e50; 
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-        /* Botones Flotantes */
-        .fab-container { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 12px; z-index: 99; }
-        .fab { width: 56px; height: 56px; border-radius: 50%; border: none; color: white; font-size: 24px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.2s; }
-        .fab:active { transform: scale(0.9); }
-        .fab-p { background: var(--p); }
-        .fab-f { background: #27ae60; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: var(--font-family); 
+        }
 
-        /* Modales */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; padding: 15px; overflow-y: auto; }
-        .modal-c { background: white; border-radius: 20px; padding: 20px; max-width: 500px; margin: 20px auto; }
-        .t-tag { padding: 12px; margin: 8px 0; border-radius: 10px; display: flex; justify-content: space-between; color: white; font-weight: bold; align-items: center; }
-        .btn { padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; font-size: 1rem; }
+        body { 
+            background: var(--background); 
+            color: var(--text); 
+            padding: 15px; 
+            padding-bottom: 90px; 
+        }
         
-        .field-row { display: flex; gap: 5px; margin-bottom: 8px; background: #f9f9f9; padding: 8px; border-radius: 8px; align-items: center; }
-        .field-row input { background: white; border-width: 1px; padding: 6px; }
-        .field-row .i-l { flex: 1.2; }
-        .field-row .i-f { flex: 2; font-family: monospace; }
+        /* =========================================
+           COMPONENTES PRINCIPALES (Área de Trabajo)
+           ========================================= */
+        .vignettes-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 15px; 
+        }
+
+        .card { 
+            background: white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+        }
         
-        .plantilla-especial-badge { background: #1a1a1a; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; margin-left: 8px; }
+        .card-header { 
+            padding: 12px; 
+            display: flex; 
+            justify-content: space-between; 
+            font-weight: bold; 
+            align-items: center; 
+        }
+
+        .card-body { 
+            padding: 15px; 
+        }
+        
+        /* =========================================
+           FORMULARIOS E INPUTS
+           ========================================= */
+        .input-group { 
+            display: flex; 
+            gap: 8px; 
+            margin-bottom: 10px; 
+        }
+
+        .input-group div { 
+            flex: 1; 
+        }
+
+        .input-group label { 
+            font-size: 0.7rem; 
+            color: #888; 
+            display: block; 
+            text-transform: uppercase; 
+            margin-bottom: 2px; 
+        }
+
+        input, textarea { 
+            width: 100%; 
+            padding: 10px; 
+            border: 2px solid #eee; 
+            border-radius: 8px; 
+            outline: none; 
+            font-size: 1rem; 
+            font-family: monospace; 
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus { 
+            border-color: var(--primary); 
+        }
+
+        textarea { 
+            resize: vertical; 
+            min-height: 80px; 
+        }
+        
+        /* =========================================
+           RESULTADOS
+           ========================================= */
+        .res-item { 
+            display: flex; 
+            justify-content: space-between; 
+            font-size: 0.95rem; 
+            padding: 8px 0; 
+            border-bottom: 1px dashed #eee; 
+        }
+
+        .res-item b { 
+            color: var(--primary); 
+        }
+
+        .resultado-especial { 
+            background: #f0f9ff; 
+            padding: 12px; 
+            border-radius: 8px; 
+            margin-top: 10px; 
+            text-align: center; 
+            font-weight: bold; 
+        }
+
+        .resultado-especial b { 
+            font-size: 1.2rem; 
+            color: var(--text); 
+        }
+
+        .plantilla-especial-badge { 
+            background: #1a1a1a; 
+            color: white; 
+            padding: 2px 8px; 
+            border-radius: 12px; 
+            font-size: 0.7rem; 
+            margin-left: 8px; 
+            vertical-align: middle;
+        }
+
+        /* =========================================
+           BOTONES FLOTANTES
+           ========================================= */
+        .fab-container { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            display: flex; 
+            gap: 12px; 
+            z-index: 99; 
+        }
+
+        .fab { 
+            width: 56px; 
+            height: 56px; 
+            border-radius: 50%; 
+            border: none; 
+            color: white; 
+            font-size: 24px; 
+            cursor: pointer; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            transition: transform 0.2s; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab:hover {
+            transform: scale(1.05);
+        }
+
+        .fab:active { 
+            transform: scale(0.9); 
+        }
+
+        .fab-primary { background: var(--primary); }
+        .fab-success { background: #27ae60; }
+
+        /* =========================================
+           MODALES Y CONTENIDO INTERNO
+           ========================================= */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.7); 
+            z-index: 100; 
+            padding: 15px; 
+            overflow-y: auto; 
+        }
+
+        .modal-content { 
+            background: white; 
+            border-radius: 20px; 
+            padding: 20px; 
+            max-width: 500px; 
+            margin: 20px auto; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .template-tag { 
+            padding: 12px; 
+            margin: 8px 0; 
+            border-radius: 10px; 
+            display: flex; 
+            justify-content: space-between; 
+            color: white; 
+            font-weight: bold; 
+            align-items: center; 
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: 2px solid currentColor;
+            opacity: 0.7;
+            color: inherit;
+            font-size: 1.4rem;
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s, opacity 0.2s;
+            margin-left: 10px;
+        }
+        
+        .icon-btn:hover {
+            opacity: 1;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.9);
+        }
+
+        .btn { 
+            padding: 12px; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            width: 100%; 
+            margin-top: 10px; 
+            font-size: 1rem; 
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .field-row { 
+            display: flex; 
+            gap: 5px; 
+            margin-bottom: 8px; 
+            background: #f9f9f9; 
+            padding: 8px; 
+            border-radius: 8px; 
+            align-items: center; 
+        }
+
+        .field-row input { 
+            background: white; 
+            border-width: 1px; 
+            padding: 6px; 
+        }
+
+        .field-row .input-label { 
+            flex: 1.2; 
+        }
+
+        .field-row .input-formula { 
+            flex: 2; 
+            font-family: monospace; 
+        }
+        
+        /* Drag and Drop */
+        .drag-icon {
+            cursor: grab;
+            margin-right: 8px;
+            font-size: 1.2rem;
+            user-select: none;
+            touch-action: none; /* Asegura un agarre suave en móviles */
+        }
+        
+        .drag-icon:active {
+            cursor: grabbing;
+        }
+
+        .sortable-ghost {
+            opacity: 0.4;
+            transform: scale(0.98);
+        }
+
+        /* Utilidades de espaciado */
+        .mb-2 { margin-bottom: 10px; }
+        .mb-3 { margin-bottom: 15px; }
+        .text-muted { color: #666; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
+    <!-- Contenedor Principal (Tarjetas / Viñetas) -->
     <div id="vignettesContainer" class="vignettes-grid"></div>
 
+    <!-- Botones Flotantes -->
     <div class="fab-container">
-        <button class="fab fab-f" onclick="openM('mFirebase')">💾</button>
-        <button class="fab fab-p" onclick="openM('mTemplates')">📄</button>
+        <button class="fab fab-success" onclick="openModal('mFirebase')" title="Sincronizar con Firebase" aria-label="Sincronizar">💾</button>
+        <button class="fab fab-primary" onclick="openModal('mTemplates')" title="Gestionar Plantillas" aria-label="Plantillas">📄</button>
     </div>
 
+    <!-- Modal: Lista de Plantillas -->
     <div id="mTemplates" class="modal">
-        <div class="modal-c">
-            <h2 style="margin-bottom:15px">Plantillas</h2>
-            <div id="listT"></div>
-            <button class="btn" style="background:#8e44ad; color:white" onclick="editT()">+ Nueva Plantilla</button>
-            <button class="btn" style="background:#95a5a6; color:white" onclick="closeM()">Cerrar</button>
+        <div class="modal-content">
+            <h2 class="mb-3">Plantillas</h2>
+            <div id="listTemplates"></div>
+            <button class="btn" style="background:#8e44ad; color:white" onclick="openTemplateEditor()">+ Nueva Plantilla</button>
+            <button class="btn" style="background:#95a5a6; color:white" onclick="closeModal()">Cerrar</button>
         </div>
     </div>
 
+    <!-- Modal: Editor de Plantillas -->
     <div id="mEdit" class="modal">
-        <div class="modal-c">
-            <h3 id="edTitle" style="margin-bottom:10px">Editor de Plantilla</h3>
+        <div class="modal-content">
+            <h3 id="edTitle" class="mb-2">Editor de Plantilla</h3>
             <input type="hidden" id="edId">
-            <label style="font-size:0.8rem; color:#666">Nombre y Color:</label>
+            
+            <label class="text-muted">Nombre y Color:</label>
             <div style="display:flex; gap:5px; margin-bottom:15px">
                 <input type="text" id="edName" placeholder="Nombre (ej: Vigas)">
-                <input type="color" id="edColor" style="width:60px; height:45px; padding:2px">
+                <input type="color" id="edColor" style="width:60px; height:45px; padding:2px; cursor:pointer;">
             </div>
 
             <div style="background:#eee; padding:10px; border-radius:10px; margin-bottom:15px">
-                <p style="font-size:0.8rem; font-weight:bold; margin-bottom:5px">Variables a pedir:</p>
-                <label style="margin-right:10px"><input type="checkbox" id="useX" checked disabled> X</label>
-                <label style="margin-right:10px"><input type="checkbox" id="useY"> Y</label>
-                <label><input type="checkbox" id="useZ"> Z</label>
+                <p style="font-size:0.8rem; font-weight:bold; margin-bottom:5px">Variables a pedir (contexto opcional):</p>
+                <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
+                    <label style="min-width:40px; font-weight:bold;"><input type="checkbox" id="useX" checked disabled> X</label>
+                    <input type="text" id="descX" placeholder="Ej: altura, metros" style="padding:6px; font-size:0.9rem; flex:1;">
+                </div>
+                <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
+                    <label style="min-width:40px; font-weight:bold;"><input type="checkbox" id="useY"> Y</label>
+                    <input type="text" id="descY" placeholder="Ej: base, kilos" style="padding:6px; font-size:0.9rem; flex:1;">
+                </div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <label style="min-width:40px; font-weight:bold;"><input type="checkbox" id="useZ"> Z</label>
+                    <input type="text" id="descZ" placeholder="Ej: profundidad" style="padding:6px; font-size:0.9rem; flex:1;">
+                </div>
             </div>
 
             <div id="edFields"></div>
-            <button class="btn" style="background:#2ecc71; color:white" onclick="saveT()">Guardar Cambios</button>
-            <button id="btnDel" class="btn" style="background:#e74c3c; color:white" onclick="delT()">Eliminar Plantilla</button>
-            <button class="btn" style="background:#95a5a6; color:white" onclick="openM('mTemplates')">Cancelar</button>
+            
+            <button class="btn" style="background:#2ecc71; color:white" onclick="saveTemplate()">Guardar Cambios</button>
+            <button id="btnDeleteTemp" class="btn" style="background:#e74c3c; color:white" onclick="deleteTemplate()">Eliminar Plantilla</button>
+            <button class="btn" style="background:#95a5a6; color:white" onclick="openModal('mTemplates')">Cancelar</button>
         </div>
     </div>
 
+    <!-- Modal: Firebase Sincronización -->
     <div id="mFirebase" class="modal">
-        <div class="modal-c">
-            <h3>Sincronización</h3>
-            <button class="btn" style="background:#3498db; color:white" onclick="fbSync('up')">⬆️ Subir a Firebase</button>
-            <button class="btn" style="background:#27ae60; color:white" onclick="fbSync('down')">⬇️ Descargar de Firebase</button>
-            <button class="btn" style="background:#95a5a6; color:white" onclick="closeM()">Cerrar</button>
+        <div class="modal-content">
+            <h3 class="mb-3">Sincronización</h3>
+            <button class="btn" style="background:#3498db; color:white" onclick="syncFirebase('up')">⬆️ Subir a Firebase</button>
+            <button class="btn" style="background:#27ae60; color:white" onclick="syncFirebase('down')">⬇️ Descargar de Firebase</button>
+            <button class="btn" style="background:#95a5a6; color:white" onclick="closeModal()">Cerrar</button>
         </div>
     </div>
 
     <script>
+        /* =========================================
+           CONFIGURACIÓN E INICIALIZACIÓN
+           ========================================= */
         const firebaseConfig = { databaseURL: "https://autoformula-a2442-default-rtdb.firebaseio.com/" };
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        const database = firebase.database();
 
-        // PLANTILLA ESPECIAL (no editable, no eliminable)
+        // Plantilla especial integrada (no editable, no eliminable)
         const PLANTILLA_ESPECIAL = {
             id: -1,
             n: '🧮 Calculadora Rápida',
@@ -118,6 +393,9 @@
             f: [{ l: 'Resultado', f: 'expresion' }]
         };
 
+        /* =========================================
+           ESTADO APLICACIÓN (Local Storage)
+           ========================================= */
         let templates = JSON.parse(localStorage.getItem('t')) || [];
         if (!templates.some(t => t.id === -1)) {
             templates.unshift(PLANTILLA_ESPECIAL);
@@ -125,12 +403,22 @@
         
         let vignettes = JSON.parse(localStorage.getItem('v')) || [];
 
-        const openM = id => { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); document.getElementById(id).style.display='block'; if(id=='mTemplates') renderT(); };
-        const closeM = () => document.querySelectorAll('.modal').forEach(m=>m.style.display='none');
+        /* =========================================
+           FUNCIONES DE UTILIDAD Y CÁLCULO
+           ========================================= */
+        function isDarkColor(hex) { 
+            let r = parseInt(hex.slice(1,3), 16);
+            let g = parseInt(hex.slice(3,5), 16);
+            let b = parseInt(hex.slice(5,7), 16); 
+            // Fórmula corregida para luminiscencia de colores
+            return (r * 299 + g * 587 + b * 114) / 1000 < 128; 
+        }
 
         function evaluarExpresion(expresion) {
             try {
-                let limpia = expresion.replace(/\s/g, '');
+                let limpia = expresion.trim();
+                if (!limpia) return '0';
+                limpia = limpia.replace(/\s/g, '');
                 if (!/^[0-9+\-*/().]+$/.test(limpia)) {
                     throw new Error('Caracteres no permitidos');
                 }
@@ -138,264 +426,386 @@
                 if (isNaN(resultado) || !isFinite(resultado)) {
                     throw new Error('Resultado inválido');
                 }
-                return resultado.toFixed(4);
+                
+                // Formateo inteligente de resultados
+                const strFull = resultado.toString();
+                const partes = strFull.split('.');
+                
+                // Si es entero (no tiene punto o los decimales son 0 en JS)
+                if (partes.length === 1) return strFull;
+                
+                // Si tiene 4 decimales o menos, mostramos el número tal cual (sin ceros extra al final)
+                if (partes[1].length <= 4) return strFull;
+                
+                // Si tiene más de 4 decimales, redondeamos a 4 y ponemos puntos suspensivos
+                // parseFloat elimina los ceros finales innecesarios del redondeo (ej: 3.1000 -> 3.1)
+                const redondeado = parseFloat(resultado.toFixed(4)).toString();
+                return redondeado + '...';
             } catch (e) {
                 return 'Error en expresión';
             }
         }
 
-        function actualizarResultadoEspecial(id) {
-            const v = vignettes.find(x => x.id == id);
-            if (v) {
-                const resultado = evaluarExpresion(v.expresion || '');
-                const resultadoSpan = document.getElementById(`res-especial-${id}`);
-                if (resultadoSpan) {
-                    resultadoSpan.textContent = resultado;
-                }
+        function evaluarFormula(formula, x, y, z) { 
+            try { 
+                // Añadido || 0 para manejar x como string vacía si el usuario borra el input
+                return eval(formula.replace(/x/g, `(${x||0})`)
+                                   .replace(/y/g, `(${y||0})`)
+                                   .replace(/z/g, `(${z||0})`)).toFixed(2); 
+            } catch { 
+                return '...'; 
             }
         }
 
-        function updValEspecial(id, expresion) {
-            const v = vignettes.find(x => x.id == id);
-            v.expresion = expresion;
-            localStorage.setItem('v', JSON.stringify(vignettes));
-            actualizarResultadoEspecial(id);
-        }
+        /* =========================================
+           LÓGICA DE INTERFAZ & MODALES
+           ========================================= */
+        const openModal = (id) => { 
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); 
+            document.getElementById(id).style.display = 'block'; 
+            if (id === 'mTemplates') renderTemplatesList(); 
+        };
+        
+        const closeModal = () => {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        };
 
-        function renderV() {
-            const cont = document.getElementById('vignettesContainer');
-            cont.innerHTML = vignettes.length ? '' : '<p style="text-align:center;width:100%;color:#888;margin-top:40px">Sin viñetas. Toca 📄 para empezar.</p>';
+        /* =========================================
+           MANEJO DE VIÑETAS (TARJETAS)
+           ========================================= */
+        function renderVignettes() {
+            const container = document.getElementById('vignettesContainer');
             
-            vignettes.forEach(v => {
-                const t = templates.find(temp => temp.id == v.tId);
-                if (!t) return;
+            if (!vignettes.length) {
+                container.innerHTML = '<p style="text-align:center;width:100%;color:#888;margin-top:40px">Sin viñetas. Toca 📄 para empezar.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            vignettes.forEach(vignette => {
+                const template = templates.find(temp => temp.id == vignette.tId);
+                if (!template) return;
                 
-                if (t.esEspecial) {
-                    const expresionActual = (v.expresion || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                    const resultado = evaluarExpresion(v.expresion || '');
-                    
-                    cont.innerHTML += `
-                        <div class="card" id="card-especial-${v.id}">
-                            <div class="card-h" style="background:${t.c}; color:white">
-                                <span>${t.n} <span class="plantilla-especial-badge">EXP自由</span></span>
-                                <span onclick="delV(${v.id})" style="font-size:1.5rem; cursor:pointer">&times;</span>
-                            </div>
-                            <div class="card-b">
-                                <div class="input-group">
-                                    <div style="flex:1">
-                                        <label>📐 Expresión Matemática</label>
-                                        <textarea id="textarea-${v.id}" placeholder="Ej: (145.163*5)+(220.512*3)+276.516">${expresionActual}</textarea>
-                                        <small style="color:#666; display:block; margin-top:5px">✅ Soporta: + - * / ( ) . y espacios</small>
-                                    </div>
-                                </div>
-                                <div class="resultado-especial">
-                                    🟰 <b id="res-especial-${v.id}">${resultado}</b>
-                                </div>
-                            </div>
-                        </div>`;
+                if (template.esEspecial) {
+                    renderSpecialVignette(container, vignette, template);
                 } else {
-                    let inpHtml = `<div><label>X</label><input type="number" id="x-${v.id}" value="${v.x}" oninput="updVal(${v.id},'x',this.value)"></div>`;
-                    if(t.useY) inpHtml += `<div><label>Y</label><input type="number" id="y-${v.id}" value="${v.y||0}" oninput="updVal(${v.id},'y',this.value)"></div>`;
-                    if(t.useZ) inpHtml += `<div><label>Z</label><input type="number" id="z-${v.id}" value="${v.z||0}" oninput="updVal(${v.id},'z',this.value)"></div>`;
-
-                    let resHtml = t.f.map((f, i) => `<div class="res-item"><span>${f.l}:</span><b id="r-${v.id}-${i}">${evalF(f.f, v.x, v.y, v.z)}</b></div>`).join('');
-
-                    cont.innerHTML += `
-                        <div class="card">
-                            <div class="card-h" style="background:${t.c}; color:${isDark(t.c)?'#fff':'#222'}">
-                                <span>${t.n}</span>
-                                <span onclick="delV(${v.id})" style="font-size:1.5rem; cursor:pointer">&times;</span>
-                            </div>
-                            <div class="card-b">
-                                <div class="input-group">${inpHtml}</div>
-                                <div>${resHtml}</div>
-                            </div>
-                        </div>`;
+                    renderNormalVignette(container, vignette, template);
                 }
             });
 
-            // Después de renderizar, agregar los event listeners a los textareas especiales
-            vignettes.forEach(v => {
-                const t = templates.find(temp => temp.id == v.tId);
-                if (t && t.esEspecial) {
-                    const textarea = document.getElementById(`textarea-${v.id}`);
+            // Asignar listeners a los textareas después de renderizar dinámicamente
+            vignettes.forEach(vignette => {
+                const temp = templates.find(t => t.id == vignette.tId);
+                if (temp && temp.esEspecial) {
+                    const textarea = document.getElementById(`textarea-${vignette.id}`);
                     if (textarea) {
-                        textarea.addEventListener('input', function(e) {
-                            updValEspecial(v.id, this.value);
+                        textarea.addEventListener('input', function() {
+                            updateSpecialValue(vignette.id, this.value);
                         });
                     }
                 }
             });
         }
 
-        function updVal(id, key, val) {
-            const v = vignettes.find(x => x.id == id);
-            v[key] = parseFloat(val) || 0;
-            const t = templates.find(temp => temp.id == v.tId);
-            t.f.forEach((f, i) => {
-                const el = document.getElementById(`r-${v.id}-${i}`);
-                if(el) el.innerText = evalF(f.f, v.x, v.y, v.z);
+        function renderSpecialVignette(container, vignette, template) {
+            const expresionActual = (vignette.expresion || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const resultado = evaluarExpresion(vignette.expresion || '');
+            
+            container.innerHTML += `
+                <div class="card" id="card-especial-${vignette.id}" data-id="${vignette.id}">
+                    <div class="card-header" style="background:${template.c}; color:white">
+                        <span style="display:flex; align-items:center;">
+                            <span class="drag-icon" style="color: rgba(255,255,255,0.7)">☰</span>
+                            ${template.n} <span class="plantilla-especial-badge">EXP自由</span>
+                        </span>
+                        <span onclick="deleteVignette(${vignette.id})" style="font-size:1.5rem; cursor:pointer" title="Eliminar">&times;</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <div style="flex:1">
+                                <label>📐 Expresión Matemática</label>
+                                <textarea id="textarea-${vignette.id}" placeholder="Ej: (145.163*5)+(220.512*3)+276.516">${expresionActual}</textarea>
+                                <small style="color:#666; display:block; margin-top:5px">✅ Soporta: + - * / ( ) . y espacios</small>
+                            </div>
+                        </div>
+                        <div class="resultado-especial">
+                            🟰 <b id="res-especial-${vignette.id}">${resultado}</b>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function renderNormalVignette(container, vignette, template) {
+            const labelX = template.descX ? `X - ${template.descX}` : 'X';
+            const placeX = template.descX ? `placeholder="${template.descX}"` : '';
+            let inpHtml = `<div><label>${labelX}</label><input type="number" id="x-${vignette.id}" value="${vignette.x !== undefined ? vignette.x : ''}" ${placeX} oninput="updateValue(${vignette.id},'x',this.value)"></div>`;
+            
+            if (template.useY) {
+                const labelY = template.descY ? `Y - ${template.descY}` : 'Y';
+                const placeY = template.descY ? `placeholder="${template.descY}"` : '';
+                inpHtml += `<div><label>${labelY}</label><input type="number" id="y-${vignette.id}" value="${vignette.y !== undefined ? vignette.y : ''}" ${placeY} oninput="updateValue(${vignette.id},'y',this.value)"></div>`;
+            }
+            if (template.useZ) {
+                const labelZ = template.descZ ? `Z - ${template.descZ}` : 'Z';
+                const placeZ = template.descZ ? `placeholder="${template.descZ}"` : '';
+                inpHtml += `<div><label>${labelZ}</label><input type="number" id="z-${vignette.id}" value="${vignette.z !== undefined ? vignette.z : ''}" ${placeZ} oninput="updateValue(${vignette.id},'z',this.value)"></div>`;
+            }
+
+            let resHtml = template.f.map((f, i) => `
+                <div class="res-item">
+                    <span>${f.l}:</span>
+                    <b id="r-${vignette.id}-${i}">${evaluarFormula(f.f, vignette.x, vignette.y, vignette.z)}</b>
+                </div>
+            `).join('');
+
+            container.innerHTML += `
+                <div class="card" data-id="${vignette.id}">
+                    <div class="card-header" style="background:${template.c}; color:${isDarkColor(template.c) ? '#fff' : '#222'}">
+                        <span style="display:flex; align-items:center;">
+                            <span class="drag-icon" style="color:${isDarkColor(template.c) ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)'}">☰</span>
+                            ${template.n}
+                        </span>
+                        <span onclick="deleteVignette(${vignette.id})" style="font-size:1.5rem; cursor:pointer" title="Eliminar">&times;</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group">${inpHtml}</div>
+                        <div>${resHtml}</div>
+                    </div>
+                </div>`;
+        }
+
+        function updateValue(id, key, val) {
+            const vignette = vignettes.find(x => x.id == id);
+            if (!vignette) return;
+            
+            // Si el valor está vacío, guardamos '' en lugar de 0 para que se visualice el placeholder
+            vignette[key] = val === '' ? '' : (parseFloat(val) || 0);
+            const template = templates.find(temp => temp.id == vignette.tId);
+            
+            template.f.forEach((f, i) => {
+                const el = document.getElementById(`r-${vignette.id}-${i}`);
+                if (el) el.innerText = evaluarFormula(f.f, vignette.x, vignette.y, vignette.z);
             });
+            
             localStorage.setItem('v', JSON.stringify(vignettes));
         }
 
-        function renderT() {
-            const listT = document.getElementById('listT');
-            listT.innerHTML = '';
+        function updateSpecialValue(id, expresion) {
+            const vignette = vignettes.find(x => x.id == id);
+            if (!vignette) return;
             
-            templates.forEach(t => {
-                if (t.esEspecial) {
-                    listT.innerHTML += `
-                        <div class="t-tag" style="background:${t.c}; opacity:0.9">
-                            <span onclick="spawnV(${t.id})" style="flex:1; cursor:pointer">⭐ ${t.n}</span>
+            vignette.expresion = expresion;
+            localStorage.setItem('v', JSON.stringify(vignettes));
+            
+            // Actualizar UI del resultado de inmediato
+            const resultado = evaluarExpresion(expresion || '');
+            const resultadoSpan = document.getElementById(`res-especial-${id}`);
+            if (resultadoSpan) {
+                resultadoSpan.textContent = resultado;
+            }
+        }
+
+        const spawnVignette = (templateId) => { 
+            // Inician vacíos ('') para que los placeholders se muestren al agregar viñeta nueva
+            const newVignette = { id: Date.now(), tId: templateId, x: '', y: '', z: '' };
+            if (templateId === -1) {
+                newVignette.expresion = '';
+            }
+            vignettes.push(newVignette); 
+            localStorage.setItem('v', JSON.stringify(vignettes)); 
+            renderVignettes(); 
+            closeModal(); 
+        };
+        
+        const deleteVignette = (id) => { 
+            if(confirm('¿Eliminar esta calculadora?')) { 
+                vignettes = vignettes.filter(x => x.id != id); 
+                localStorage.setItem('v', JSON.stringify(vignettes)); 
+                renderVignettes(); 
+            }
+        };
+
+        /* =========================================
+           MANEJO DE PLANTILLAS EN MODAL
+           ========================================= */
+        function renderTemplatesList() {
+            const listContainer = document.getElementById('listTemplates');
+            listContainer.innerHTML = '';
+            
+            templates.forEach(template => {
+                if (template.esEspecial) {
+                    listContainer.innerHTML += `
+                        <div class="template-tag" style="background:${template.c}; opacity:0.9">
+                            <span onclick="spawnVignette(${template.id})" style="flex:1; cursor:pointer">⭐ ${template.n}</span>
                             <span style="font-size:0.8rem; opacity:0.7">🔒 Especial</span>
                         </div>`;
                 } else {
-                    listT.innerHTML += `
-                        <div class="t-tag" style="background:${t.c}">
-                            <span onclick="spawnV(${t.id})" style="flex:1; cursor:pointer">📄 ${t.n}</span>
-                            <button onclick="editT(${t.id})" style="background:none; border:none; color:inherit; font-size:1.3rem; cursor:pointer">✎</button>
+                    listContainer.innerHTML += `
+                        <div class="template-tag" style="background:${template.c}; color:${isDarkColor(template.c) ? '#fff' : '#222'}">
+                            <span onclick="spawnVignette(${template.id})" style="flex:1; cursor:pointer; display:flex; align-items:center;">📄 ${template.n}</span>
+                            <button class="icon-btn" onclick="openTemplateEditor(${template.id})" title="Editar">✎</button>
                         </div>`;
                 }
             });
         }
 
-        function editT(id=null) {
+        function openTemplateEditor(id = null) {
             if (id === -1) {
                 alert('❌ La plantilla especial no se puede editar');
                 return;
             }
             
-            openM('mEdit');
-            const t = templates.find(x => x.id == id) || { id:'', n:'', c:'#4a90e2', useY:false, useZ:false, f:[{l:'', f:''}] };
-            document.getElementById('edId').value = t.id;
-            document.getElementById('edName').value = t.n;
-            document.getElementById('edColor').value = t.c;
-            document.getElementById('useY').checked = t.useY;
-            document.getElementById('useZ').checked = t.useZ;
-            document.getElementById('btnDel').style.display = (id && id !== -1) ? 'block' : 'none';
+            openModal('mEdit');
             
-            const fCont = document.getElementById('edFields');
-            fCont.innerHTML = '<p style="font-size:0.8rem; margin-bottom:5px; font-weight:bold">Fórmulas de Resultado:</p>';
+            // Cargar datos (o valores por defecto si es una nueva)
+            const template = templates.find(x => x.id == id) || { 
+                id: '', n: '', c: '#4a90e2', useY: false, useZ: false, f: [{ l: '', f: '' }] 
+            };
             
-            (t.f || []).forEach(f => addF(f.l, f.f));
+            document.getElementById('edId').value = template.id;
+            document.getElementById('edName').value = template.n;
+            document.getElementById('edColor').value = template.c;
+            document.getElementById('useY').checked = template.useY;
+            document.getElementById('useZ').checked = template.useZ;
+            
+            document.getElementById('descX').value = template.descX || '';
+            document.getElementById('descY').value = template.descY || '';
+            document.getElementById('descZ').value = template.descZ || '';
+            
+            // Mostrar botón eliminar solo si está editando una plantilla existente
+            document.getElementById('btnDeleteTemp').style.display = (id && id !== -1) ? 'block' : 'none';
+            
+            // Cargar campos dinámicos de fórmulas
+            const fieldsContainer = document.getElementById('edFields');
+            fieldsContainer.innerHTML = '<p style="font-size:0.8rem; margin-bottom:5px; font-weight:bold">Fórmulas de Resultado:</p>';
+            
+            (template.f || []).forEach(f => addFormulaField(f.l, f.f));
             
             const btnAdd = document.createElement('button');
             btnAdd.className = 'btn';
             btnAdd.innerText = '+ Añadir Fórmula';
-            btnAdd.onclick = () => addF();
-            fCont.appendChild(btnAdd);
+            btnAdd.onclick = () => addFormulaField();
+            fieldsContainer.appendChild(btnAdd);
         }
 
-        const addF = (l='', f='') => {
+        function addFormulaField(label = '', formula = '') {
             const div = document.createElement('div');
             div.className = 'field-row';
             div.innerHTML = `
-                <input placeholder="Etiqueta" class="i-l" value="${l.replace(/"/g, '&quot;')}">
-                <input placeholder="Fórmula" class="i-f" value="${f.replace(/"/g, '&quot;')}">
-                <button onclick="this.parentElement.remove()" style="border:none; background:none; color:red; font-size:1.2rem">&times;</button>
+                <input placeholder="Etiqueta" class="input-label" value="${label.replace(/"/g, '&quot;')}">
+                <input placeholder="Fórmula" class="input-formula" value="${formula.replace(/"/g, '&quot;')}">
+                <button onclick="this.parentElement.remove()" style="border:none; background:none; color:red; font-size:1.2rem; cursor:pointer;" title="Eliminar fórmula">&times;</button>
             `;
             const fCont = document.getElementById('edFields');
             fCont.insertBefore(div, fCont.lastElementChild);
-        };
+        }
 
-        function saveT() {
-            const id = document.getElementById('edId').value || Date.now();
+        function saveTemplate() {
+            const idInputValue = document.getElementById('edId').value;
+            const newId = idInputValue ? parseInt(idInputValue) : Date.now();
             
-            if (parseInt(id) === -1) {
+            if (newId === -1) {
                 alert('❌ No se puede modificar la plantilla especial');
                 return;
             }
             
             const fieldRows = Array.from(document.querySelectorAll('.field-row'));
             
-            const nt = {
-                id: parseInt(id),
+            const newTemplate = {
+                id: newId,
                 n: document.getElementById('edName').value || 'Sin nombre',
                 c: document.getElementById('edColor').value,
                 useY: document.getElementById('useY').checked,
                 useZ: document.getElementById('useZ').checked,
-                f: fieldRows.map(r => ({
-                    l: r.querySelector('.i-l').value || '?',
-                    f: r.querySelector('.i-f').value.toLowerCase().replace(/\s/g, '')
+                descX: document.getElementById('descX').value,
+                descY: document.getElementById('descY').value,
+                descZ: document.getElementById('descZ').value,
+                f: fieldRows.map(row => ({
+                    l: row.querySelector('.input-label').value || '?',
+                    f: row.querySelector('.input-formula').value.toLowerCase().replace(/\s/g, '')
                 }))
             };
 
-            const idx = templates.findIndex(x => x.id == id);
-            if(idx > -1) templates[idx] = nt; else templates.push(nt);
+            const indexToUpdate = templates.findIndex(x => x.id === newId);
+            if (indexToUpdate > -1) {
+                templates[indexToUpdate] = newTemplate;
+            } else {
+                templates.push(newTemplate);
+            }
             
             localStorage.setItem('t', JSON.stringify(templates));
-            renderV(); 
-            openM('mTemplates');
+            renderVignettes(); 
+            openModal('mTemplates');
         }
 
-        const spawnV = id => { 
-            const nuevaViñeta = {id:Date.now(), tId:id, x:0, y:0, z:0};
-            
-            if (id === -1) {
-                nuevaViñeta.expresion = '';
-            }
-            
-            vignettes.push(nuevaViñeta); 
-            localStorage.setItem('v', JSON.stringify(vignettes)); 
-            renderV(); 
-            closeM(); 
-        };
-        
-        const delV = id => { 
-            if(confirm('¿Eliminar esta viñeta?')) { 
-                vignettes = vignettes.filter(x=>x.id!=id); 
-                localStorage.setItem('v', JSON.stringify(vignettes)); 
-                renderV(); 
-            }
-        };
-        
-        const evalF = (f, x, y, z) => { 
-            try { 
-                return eval(f.replace(/x/g,`(${x})`).replace(/y/g,`(${y||0})`).replace(/z/g,`(${z||0})`)).toFixed(2); 
-            } catch { 
-                return '...'; 
-            }
-        };
-        
-        const isDark = h => { 
-            let r=parseInt(h.slice(1,3),16), g=parseInt(h.slice(3,5),16), b=parseInt(h.slice(5,7),16); 
-            return (r*299+g*587+b*114)/1000 < 128; 
-        };
-        
-        const delT = () => { 
+        const deleteTemplate = () => { 
             const id = parseInt(document.getElementById('edId').value);
             if (id === -1) {
                 alert('❌ No se puede eliminar la plantilla especial');
                 return;
             }
-            if(confirm('¿Borrar plantilla?')){ 
-                templates=templates.filter(x=>x.id!=id); 
+            if(confirm('¿Seguro que deseas borrar esta plantilla?')) { 
+                templates = templates.filter(x => x.id !== id); 
                 localStorage.setItem('t', JSON.stringify(templates)); 
-                openM('mTemplates'); 
+                openModal('mTemplates'); 
             } 
         };
 
-        async function fbSync(mode) {
+        /* =========================================
+           SINCRONIZACIÓN CON FIREBASE
+           ========================================= */
+        async function syncFirebase(mode) {
             try {
+                // Sincronizar solo plantillas personalizadas y no la "Especial" (interna)
                 const templatesToSync = templates.filter(t => !t.esEspecial);
                 
-                if(mode=='up') await db.ref('plantillas').set(templatesToSync);
-                else { 
-                    const s = await db.ref('plantillas').once('value'); 
-                    const loadedTemplates = Object.values(s.val() || {});
+                if (mode === 'up') {
+                    await database.ref('plantillas').set(templatesToSync);
+                    alert('✅ Subida a Firebase exitosa. Tus plantillas están en la nube.'); 
+                } else { 
+                    const snapshot = await database.ref('plantillas').once('value'); 
+                    const loadedTemplates = Object.values(snapshot.val() || {});
                     templates = [PLANTILLA_ESPECIAL, ...loadedTemplates];
                     localStorage.setItem('t', JSON.stringify(templates)); 
+                    alert('✅ Descarga desde Firebase exitosa.'); 
                 }
-                alert('✅ Sincronización exitosa'); 
-                renderV(); 
-                closeM();
-            } catch(e) { 
-                alert('❌ Error: ' + e.message); 
+                
+                renderVignettes(); 
+                closeModal();
+            } catch (error) { 
+                alert('❌ Error de sincronización: ' + error.message); 
             }
         }
 
-        renderV();
+        /* =========================================
+           INICIALIZACIÓN
+           ========================================= */
+        // Iniciar la vista con las viñetas del Local Storage al cargar
+        renderVignettes();
+
+        // Configurar Drag and Drop para reorganizar viñetas
+        const container = document.getElementById('vignettesContainer');
+        Sortable.create(container, {
+            animation: 150,
+            handle: '.drag-icon', // Permite arrastrar solo desde el ícono para no interceptar clics en inputs
+            ghostClass: 'sortable-ghost',
+            onEnd: function (evt) {
+                // Obtener el nuevo orden de los IDs de las tarjetas en el DOM
+                const newOrderIds = Array.from(evt.to.children).map(child => parseInt(child.dataset.id));
+                const newVignettesArray = [];
+                
+                // Reconstruir el array vignettes en el nuevo orden
+                newOrderIds.forEach(id => {
+                    const found = vignettes.find(v => v.id === id);
+                    if (found) newVignettesArray.push(found);
+                });
+                
+                // Actualizar estado y persistir en Local Storage
+                vignettes = newVignettesArray;
+                localStorage.setItem('v', JSON.stringify(vignettes));
+            }
+        });
     </script>
 </body>
 </html>
