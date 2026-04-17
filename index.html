@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -305,6 +306,34 @@
         .mb-2 { margin-bottom: 10px; }
         .mb-3 { margin-bottom: 15px; }
         .text-muted { color: #666; font-size: 0.8rem; }
+
+        .formulas-box {
+            display: none;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .formulas-box b {
+            color: var(--primary);
+            font-family: monospace;
+        }
+
+        .info-btn {
+            cursor: pointer;
+            margin-left: 8px;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .info-btn:hover {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -416,12 +445,17 @@
 
         function evaluarExpresion(expresion) {
             try {
-                let limpia = expresion.trim();
+                let limpia = expresion.trim().replace(/\s/g, '');
                 if (!limpia) return '0';
-                limpia = limpia.replace(/\s/g, '');
-                if (!/^[0-9+\-*/().]+$/.test(limpia)) {
+
+                // Validar caracteres (incluyendo %)
+                if (!/^[0-9+\-*/().%]+$/.test(limpia)) {
                     throw new Error('Caracteres no permitidos');
                 }
+
+                // Convertir % a /100 (ej: 70% -> 70/100)
+                limpia = limpia.replace(/([0-9.]+)(%)/g, "($1/100)");
+
                 const resultado = eval(limpia);
                 if (isNaN(resultado) || !isFinite(resultado)) {
                     throw new Error('Resultado inválido');
@@ -448,8 +482,10 @@
 
         function evaluarFormula(formula, x, y, z) { 
             try { 
-                // Añadido || 0 para manejar x como string vacía si el usuario borra el input
-                return eval(formula.replace(/x/g, `(${x||0})`)
+                // Convertir % a /100 y limpiar espacios. Soporta números y variables (x,y,z)
+                let procesada = formula.toLowerCase().replace(/\s/g, '').replace(/([0-9.xyz]+)(%)/g, "($1/100)");
+
+                return eval(procesada.replace(/x/g, `(${x||0})`)
                                    .replace(/y/g, `(${y||0})`)
                                    .replace(/z/g, `(${z||0})`)).toFixed(2); 
             } catch { 
@@ -517,11 +553,15 @@
                     <div class="card-header" style="background:${template.c}; color:white">
                         <span style="display:flex; align-items:center;">
                             <span class="drag-icon" style="color: rgba(255,255,255,0.7)">☰</span>
+                            <span class="info-btn" onclick="toggleFormulas(${vignette.id})" title="Ver Info">❓</span>
                             ${template.n} <span class="plantilla-especial-badge">EXP自由</span>
                         </span>
                         <span onclick="deleteVignette(${vignette.id})" style="font-size:1.5rem; cursor:pointer" title="Eliminar">&times;</span>
                     </div>
                     <div class="card-body">
+                        <div id="formulas-${vignette.id}" class="formulas-box">
+                          <p>Esta es una calculadora de expresión libre. Puedes usar operadores matemáticos estándar y paréntesis.</p>
+                        </div>
                         <div class="input-group">
                             <div style="flex:1">
                                 <label>📐 Expresión Matemática</label>
@@ -559,20 +599,34 @@
                 </div>
             `).join('');
 
+            const formulasList = template.f.map(f => `<div>${f.l}: <b>${f.f}</b></div>`).join('');
+
             container.innerHTML += `
                 <div class="card" data-id="${vignette.id}">
                     <div class="card-header" style="background:${template.c}; color:${isDarkColor(template.c) ? '#fff' : '#222'}">
                         <span style="display:flex; align-items:center;">
                             <span class="drag-icon" style="color:${isDarkColor(template.c) ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)'}">☰</span>
+                            <span class="info-btn" onclick="toggleFormulas(${vignette.id})" title="Ver Fórmulas">❓</span>
                             ${template.n}
                         </span>
                         <span onclick="deleteVignette(${vignette.id})" style="font-size:1.5rem; cursor:pointer" title="Eliminar">&times;</span>
                     </div>
                     <div class="card-body">
+                        <div id="formulas-${vignette.id}" class="formulas-box">
+                          <p style="font-weight:bold; margin-bottom:5px; font-size:0.7rem; text-transform:uppercase;">Fórmulas Aplicadas:</p>
+                          ${formulasList}
+                        </div>
                         <div class="input-group">${inpHtml}</div>
                         <div>${resHtml}</div>
                     </div>
                 </div>`;
+        }
+
+        function toggleFormulas(id) {
+            const box = document.getElementById(`formulas-${id}`);
+            if (box) {
+                box.style.display = box.style.display === 'block' ? 'none' : 'block';
+            }
         }
 
         function updateValue(id, key, val) {
