@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barra de Trabajo y Calculadora</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- The Sheet Bar ("Barra de Trabajo") -->
+    <div class="barra-de-trabajo" id="workBar">
+        <!-- Fixed Left Button: Solid Black (Triggers Calculator Panel) -->
+        <button class="fixed-btn-left" onclick="toggleCalculator()" id="starBtn" title="Calculadora Rápida" aria-label="Calculadora Rápida">
+            ★
+        </button>
+        
+        <!-- Scrollable Tabs Area -->
+        <div class="scrollable-tabs-wrapper" id="tabsWrapper">
+            <!-- Rendered dynamically by JS from IndexedDB -->
+        </div>
+        
+        <!-- Fixed Right Button: Solid Green - Opens Plantillas Modal -->
+        <button class="fixed-btn-right" onclick="openPlantillasModal()" title="Plantillas" aria-label="Gestionar Plantillas">
+            ＋
+        </button>
+    </div>
+
+    <!-- QUICK CALCULATOR PANEL (CALCULADORA RAPIDA) -->
+    <div class="calculator-panel" id="calcPanel">
+        
+        <!-- Calculation Zone -->
+        <div class="calc-zone">
+            <!-- Row 1 -->
+            <div class="calc-row">
+                <input type="text" class="calc-input" id="calcInput1" placeholder="Fórmula 1 (Ej. 1 + 1)" oninput="runCalc(1)">
+                <div class="result-container">
+                    <div class="result-box" id="result1"></div>
+                    <button class="save-btn" id="saveBtn1" onclick="activateSaveMode(1)" title="Activar modo guardado">⬇</button>
+                </div>
+            </div>
+            
+            <!-- Row 2 -->
+            <div class="calc-row">
+                <input type="text" class="calc-input" id="calcInput2" placeholder="Fórmula 2 (Ej. 2 * 2)" oninput="runCalc(2)">
+                <div class="result-container">
+                    <div class="result-box" id="result2"></div>
+                    <button class="save-btn" id="saveBtn2" onclick="activateSaveMode(2)" title="Activar modo guardado">⬇</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slots & Side Controls Row -->
+        <div class="slots-wrapper">
+            <!-- Stored Value Slots (A-H) -->
+            <div class="slots-list">
+                <!-- Slot A -->
+                <div class="slot-item">
+                    <div class="slot-badge" id="badge-A" onclick="clickSlot('A')">A</div>
+                    <div class="slot-line-container">
+                        <input type="text" class="slot-input" id="input-val-A" oninput="updateSlotManually('A', this.value)" placeholder="...">
+                    </div>
+                </div>
+                <!-- Slot B -->
+                <div class="slot-item">
+                    <div class="slot-badge" id="badge-B" onclick="clickSlot('B')">B</div>
+                    <div class="slot-line-container">
+                        <input type="text" class="slot-input" id="input-val-B" oninput="updateSlotManually('B', this.value)" placeholder="...">
+                    </div>
+                </div>
+                <!-- Slot C -->
+                <div class="slot-item">
+                    <div class="slot-badge" id="badge-C" onclick="clickSlot('C')">C</div>
+                    <div class="slot-line-container">
+                        <input type="text" class="slot-input" id="input-val-C" oninput="updateSlotManually('C', this.value)" placeholder="...">
+                    </div>
+                </div>
+                <!-- Slot D -->
+                <div class="slot-item">
+                    <div class="slot-badge" id="badge-D" onclick="clickSlot('D')">D</div>
+                    <div class="slot-line-container">
+                        <input type="text" class="slot-input" id="input-val-D" oninput="updateSlotManually('D', this.value)" placeholder="...">
+                    </div>
+                </div>
+                <!-- Slot E -->
+                <div class="slot-item">
+                    <div class="slot-badge" id="badge-E" onclick="clickSlot('E')">E</div>
+                    <div class="slot-line-container">
+                        <input type="text" class="slot-input" id="input-val-E" oninput="updateSlotManually('E', this.value)" placeholder="...">
+                    </div>
+                </div>
+                <!-- Slot F -->
+                <div class="slot-item">
+                    <div class="slot-badge" id="badge-F" onclick="clickSlot('F')">F</div>
+                    <div class="slot-line-container">
+                        <input type="text" class="slot-input" id="input-val-F" oninput="updateSlotManually('F', this.value)" placeholder="...">
+                    </div>
+                </div>
+                <!-- Slot G -->
+                <div class="slot-item">
+                    <div class="slot-badge" id="badge-G" onclick="clickSlot('G')">G</div>
+                    <div class="slot-line-container">
+                        <input type="text" class="slot-input" id="input-val-G" oninput="updateSlotManually('G', this.value)" placeholder="...">
+                    </div>
+                </div>
+                <!-- Slot H -->
+                <div class="slot-item">
+                    <div class="slot-badge" id="badge-H" onclick="clickSlot('H')">H</div>
+                    <div class="slot-line-container">
+                        <input type="text" class="slot-input" id="input-val-H" oninput="updateSlotManually('H', this.value)" placeholder="...">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Extra controls on the right -->
+            <div class="extra-buttons-column">
+                <button class="extra-btn info-btn" onclick="openHelpModal()">?</button>
+                <button class="extra-btn clear-btn" onclick="clearAllSlots()" title="Vaciar slots">🗑️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN SHEET VIEWER CONTAINER -->
+    <div class="sheet-viewer-container" id="sheetViewer">
+        <!-- Rendered dynamically by JS when a tab is selected -->
+    </div>
+
+    <!-- PLANTILLAS MODAL -->
+    <div class="modal-overlay" id="plantillasOverlay" onclick="handleOverlayClick(event)">
+        <div class="plantillas-modal" id="plantillasModal">
+            <!-- Header -->
+            <div class="plantillas-modal-header">
+                <h2>Plantillas</h2>
+            </div>
+
+            <!-- Scrollable Content Area -->
+            <div class="plantillas-scroll-area" id="plantillasScrollArea">
+                <div class="plantillas-empty-hint">
+                    <span>📋</span>
+                    <p>No hay plantillas aún.<br>Pulsa <strong>Crear</strong> para añadir una.</p>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="plantillas-modal-footer">
+                <button class="btn-cancelar" onclick="closePlantillasModal()">Cancelar</button>
+                <button class="btn-crear" onclick="crearPlantilla()">Crear</button>
+                <button class="btn-importar" title="Sincronizar con Firebase" onclick="sincronizarConFirebase()">🌐</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDITOR MODAL -->
+    <div class="editor-overlay" id="editorOverlay">
+        <div class="editor-modal" id="editorModal">
+            <!-- Header -->
+            <div class="editor-header">
+                <h2>EDITOR</h2>
+                <button class="btn-eliminar" id="edBtnEliminar" onclick="eliminarPlantillaActual()">ELIMINAR</button>
+            </div>
+
+            <!-- Body -->
+            <div class="editor-body">
+
+                <!-- Image Upload -->
+                <div class="img-upload-zone" id="imgUploadZone" onclick="triggerImageUpload()">
+                    <span class="img-upload-icon">🖼️</span>
+                    <span>Subir Imagen</span>
+                </div>
+                <input type="file" id="edImageInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+
+                <!-- Name & Color -->
+                <div class="name-color-section">
+                    <label>Nombre y Color:</label>
+                    <div class="name-color-row">
+                        <input type="text" class="input-nombre" id="edNombre" placeholder="Nombre (ej: Vigas)">
+                        <input type="color" class="input-color" id="edColor" value="#4f46e5">
+                    </div>
+                </div>
+
+                <!-- Variables -->
+                <div class="variables-section">
+                    <label class="section-label">Variables a pedir (contexto opcional):</label>
+                    <div class="variable-row">
+                        <input type="checkbox" class="var-checkbox" id="varX" checked>
+                        <span class="var-label">X</span>
+                        <input type="text" class="var-desc-input" id="descX" placeholder="Ej: altura, metros">
+                    </div>
+                    <div class="variable-row">
+                        <input type="checkbox" class="var-checkbox" id="varY">
+                        <span class="var-label">Y</span>
+                        <input type="text" class="var-desc-input" id="descY" placeholder="Ej: base, kilos" disabled>
+                    </div>
+                    <div class="variable-row">
+                        <input type="checkbox" class="var-checkbox" id="varZ">
+                        <span class="var-label">Z</span>
+                        <input type="text" class="var-desc-input" id="descZ" placeholder="Ej: profundidad" disabled>
+                    </div>
+                </div>
+
+                <!-- Formulas -->
+                <div class="formulas-section">
+                    <div id="edFormulaRows">
+                        <!-- Rows injected by JS -->
+                    </div>
+                    <button class="btn-add-formula" onclick="edAgregarFormula()">+ añadir fórmula</button>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="editor-footer">
+                <button class="btn-ed-cancelar" onclick="cerrarEditor()">Cancelar</button>
+                <button class="btn-guardar" onclick="guardarPlantillaDesdeEditor()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help floating Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <h2>Calculadora Rápida - Ayuda</h2>
+            <p>La calculadora soporta expresiones aritméticas y funciones trigonométricas en tiempo real:</p>
+            <ul>
+                <li><strong>Operaciones:</strong> <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>( )</code></li>
+                <li><strong>Trigonometría:</strong> <code>sin(x)</code>, <code>cos(x)</code>, <code>tan(x)</code> (radianes).</li>
+                <li><strong>Constantes:</strong> <code>pi</code> (3.14159), <code>e</code> (2.71828)</li>
+                <li><strong>Funciones:</strong> <code>sqrt(x)</code> (raíz), <code>pow(base, exp)</code> (potencia), <code>log(x)</code> (log natural)</li>
+            </ul>
+            <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                <strong>Guardado en Slots:</strong> Escribe una fórmula, pulsa el botón verde (⬇) y haz clic en una letra parpadeante (A-H) para almacenar el valor.
+            </p>
+            <button class="modal-close-btn" onclick="closeHelpModal()">Entendido</button>
+        </div>
+    </div>
+
+    <script src="js/globals.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/tabs.js"></script>
+    <script src="js/plantillas.js"></script>
+    <script src="js/sheetViewer.js"></script>
+    <script src="js/calculator.js"></script>
+    <script src="js/firebaseSync.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
