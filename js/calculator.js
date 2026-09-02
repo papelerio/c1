@@ -252,7 +252,7 @@
                     if (paso.isFinal) {
                         return `
                             <div class="procedimiento-step" style="background: #f0fdf4; border-color: #86efac;">
-                                <span class="procedimiento-step-num" style="background: #bbf7d0; color: #14532d;">Resultado</span>
+                                <span class="procedimiento-step-num" style="background: #bbf7d0; color: #14532d;">🟰</span>
                                 <div class="procedimiento-expr" style="text-align: center;">
                                     <span class="step-final">${paso.text}</span>
                                 </div>
@@ -269,7 +269,7 @@
 
                     return `
                         <div class="procedimiento-step">
-                            <span class="procedimiento-step-num">Paso ${idx + 1}</span>
+                            <span class="procedimiento-step-num">${idx + 1})</span>
                             <div class="procedimiento-expr">${exprHTML}</div>
                         </div>`;
                 }).join('');
@@ -326,10 +326,41 @@
             let matches1 = collectMatches(opRegex1);
             if (matches1.length > 0) return matches1;
 
-            // Check Priority 2: *, / (continuous chain)
-            let opRegex2 = /(-?[0-9.]+(?:\s*[*/]\s*-?[0-9.]+)+)/;
-            let matches2 = collectMatches(opRegex2);
-            if (matches2.length > 0) return matches2;
+            // Check Priority 2: *, / — resolve in PAIRS of 2 (e.g. 2*2*4 → (2*2)*4)
+            // Find all mul/div chains, then split each into non-overlapping pairs
+            let opRegex2Full = /(-?[0-9.]+(?:\s*[*/]\s*-?[0-9.]+)+)/;
+            let mFull;
+            let allMulDivTargets = [];
+            const gMulDiv = new RegExp(opRegex2Full.source, 'g');
+            while ((mFull = gMulDiv.exec(str)) !== null) {
+                const chainStr = mFull[0];
+                const chainStart = mFull.index;
+
+                // Split chain into individual tokens: numbers and operators
+                const tokenRegex = /(-?[0-9.]+|[*/])/g;
+                let tokens = [];
+                let tok;
+                while ((tok = tokenRegex.exec(chainStr)) !== null) {
+                    tokens.push({ val: tok[0], idx: chainStart + tok.index });
+                }
+
+                // Process pairs: (num op num), (num op num), leftover
+                let i = 0;
+                while (i < tokens.length) {
+                    if (i + 2 < tokens.length) {
+                        // Pair: tokens[i] op tokens[i+1] tokens[i+2]
+                        const pairStr = tokens[i].val + tokens[i+1].val + tokens[i+2].val;
+                        const pairStart = tokens[i].idx;
+                        const pairEnd = tokens[i+2].idx + tokens[i+2].val.length;
+                        const res = evalSubExpr(pairStr);
+                        allMulDivTargets.push({ startIndex: pairStart, endIndex: pairEnd, fullText: pairStr, partialResult: res });
+                        i += 4; // skip: num, op, num, (next op if any)
+                    } else {
+                        break;
+                    }
+                }
+            }
+            if (allMulDivTargets.length > 0) return allMulDivTargets;
 
             // Check Priority 3: +, - (continuous chain of additions and subtractions)
             let opRegex3 = /(-?[0-9.]+(?:\s*[+-]\s*[0-9.]+)+)/;
