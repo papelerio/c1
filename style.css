@@ -348,6 +348,37 @@
             transform: translateY(1px);
         }
 
+        .brain-btn {
+            width: 38px;
+            height: 38px;
+            background: #6366f1; /* Soft indigo/purple background matching sketch */
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-smooth);
+        }
+
+        .brain-btn:hover:not(.disabled) {
+            background: #4f46e5;
+            transform: translateY(-1px);
+        }
+
+        .brain-btn:active:not(.disabled) {
+            transform: translateY(1px);
+        }
+
+        .brain-btn.disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            opacity: 0.7;
+            box-shadow: none;
+        }
+
 
 
         /* Slots & Controls Area */
@@ -1202,12 +1233,67 @@
             width: 100%;
             height: 40px;
             display: flex;
+            align-items: stretch;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1.5px solid rgba(15, 23, 42, 0.1);
+        }
+
+        .sheet-header-btn-help {
+            width: 44px;
+            min-width: 44px;
+            background: #000000;
+            color: #ef4444;
+            border: none;
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            transition: background 0.15s ease;
+        }
+
+        .sheet-header-btn-help:hover {
+            background: #1e293b;
+            color: #f87171;
+        }
+
+        .sheet-header-name {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
             font-weight: 700;
-            border-radius: 8px;
-            border: 1.5px solid rgba(15, 23, 42, 0.1);
+            padding: 0 12px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .sheet-header-btn-close {
+            width: 44px;
+            min-width: 44px;
+            background: #f87171;
+            color: #ffffff;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s ease;
+        }
+
+        .sheet-header-btn-close:hover {
+            background: #ef4444;
+        }
+
+        .sheet-header-btn-help:active,
+        .sheet-header-btn-close:active {
+            opacity: 0.8;
         }
 
         .sheet-image-box {
@@ -1306,33 +1392,117 @@
             color: #000000;
         }
 
-        /* Floating circular delete button */
-        .floating-delete-btn {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #ef4444;
+        .sheet-formula-val-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sheet-brain-btn {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            background: #6366f1; /* Soft purple matching sketch */
             color: #ffffff;
-            font-size: 1.4rem;
-            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.35);
-            transition: transform 0.15s ease, background 0.15s ease;
-            z-index: 1000;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 4px rgba(99, 102, 241, 0.25);
         }
 
-        .floating-delete-btn:hover {
-            background: #dc2626;
+        .sheet-brain-btn:hover:not(.disabled) {
+            background: #4f46e5;
             transform: scale(1.06);
         }
 
-        .floating-delete-btn:active {
-            transform: scale(0.96);
+        .sheet-brain-btn:active:not(.disabled) {
+            transform: scale(0.95);
+        }
+
+        .sheet-brain-btn.disabled {
+            background: #94a3b8; /* Greyed out matching sketch */
+            cursor: not-allowed;
+            opacity: 0.7;
+            box-shadow: none;
+        }
+
+        /* --- PROCEDIMIENTO STEP BY STEP STYLES --- */
+        .procedimiento-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 1.05rem;
+            font-family: monospace;
+            line-height: 2.2;
+            background: #ffffff;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border-color);
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+        }
+
+        .procedimiento-step-num {
+            font-size: 0.75rem;
+            font-weight: 800;
+            background: #e2e8f0;
+            color: #475569;
+            padding: 3px 9px;
+            border-radius: 12px;
+            font-family: sans-serif;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .procedimiento-expr {
+            flex-grow: 1;
+            word-break: break-all;
+            color: var(--text-main);
+        }
+
+        /* Highlight soft green #CCFE61 */
+        .step-highlight {
+            position: relative;
+            display: inline-block;
+            background: #CCFE61;
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 14px;
+            margin-bottom: 2px;
+            line-height: 1.4;
+        }
+
+        /* Floating red partial result text */
+        .step-partial-res {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #ef4444;
+            white-space: nowrap;
+            pointer-events: none;
+            font-family: sans-serif;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Final result strong green #57ff62 */
+        .step-final {
+            background: #57ff62;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0f172a;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(87, 255, 98, 0.35);
         }

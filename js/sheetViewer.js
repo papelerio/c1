@@ -24,7 +24,8 @@
                 });
                 
                 // Pass it to the main safe expression evaluator
-                return evaluateExpression(sanitized);
+                const res = evaluateExpression(sanitized);
+                return (typeof res === 'object' && res !== null) ? (res.displayVal || '') : res;
             } catch (e) {
                 return 'Error';
             }
@@ -49,9 +50,48 @@
                 (p.formulas || []).forEach((f, idx) => {
                     const result = evaluateFormulaExpression(f.formula, activeTab.variablesValues);
                     const resElement = document.getElementById(`sheet-res-${idx}`);
+                    const brainBtn = document.getElementById(`sheet-brain-btn-${idx}`);
                     if (resElement) resElement.innerText = result;
+                    if (brainBtn) {
+                        if (result === 'Error' || result === '') {
+                            brainBtn.classList.add('disabled');
+                        } else {
+                            brainBtn.classList.remove('disabled');
+                        }
+                    }
                 });
             });
+        }
+
+        /**
+         * Opens step-by-step procedure modal for a template formula
+         */
+        function verProcedimientoPlantillaFormula(tabId, formulaIdx) {
+            const tab = activeTabs.find(t => t.id === tabId);
+            if (!tab) return;
+            const p = plantillas.find(x => x.id === tab.plantillaId);
+            if (!p || !p.formulas || !p.formulas[formulaIdx]) return;
+
+            const f = p.formulas[formulaIdx];
+            let formulaExpr = f.formula.toLowerCase().replace(/\s/g, '');
+
+            // Substitute local variables x, y, z with current values
+            ['x', 'y', 'z'].forEach(v => {
+                const val = (tab.variablesValues && tab.variablesValues[v] !== undefined && tab.variablesValues[v] !== '') 
+                            ? tab.variablesValues[v] 
+                            : '0';
+                formulaExpr = formulaExpr.replace(new RegExp(`(?<![a-z0-9.])(${v})(?![a-z0-9])`, 'gi'), `(${val})`);
+            });
+
+            const resObj = evaluateExpression(formulaExpr);
+            if (resObj.isError || resObj.displayVal === 'Error') {
+                alert('Resuelve primero los errores en las variables antes de ver el procedimiento.');
+                return;
+            }
+
+            if (typeof abrirProcedimientoModal === 'function') {
+                abrirProcedimientoModal(formulaExpr);
+            }
         }
 
         /**
@@ -110,16 +150,27 @@
             let formulasHTML = '';
             (p.formulas || []).forEach((f, idx) => {
                 const result = evaluateFormulaExpression(f.formula, activeTab.variablesValues);
+                const isDisabled = (result === 'Error' || result === '');
                 formulasHTML += `
                     <div class="sheet-formula-item">
                         <span class="sheet-formula-label">${f.etiqueta || 'Fórmula'} :</span>
-                        <span class="sheet-formula-value" id="sheet-res-${idx}">${result}</span>
+                        <div class="sheet-formula-val-box">
+                            <span class="sheet-formula-value" id="sheet-res-${idx}">${result}</span>
+                            <button class="sheet-brain-btn ${isDisabled ? 'disabled' : ''}" 
+                                    id="sheet-brain-btn-${idx}"
+                                    onclick="verProcedimientoPlantillaFormula('${activeTab.id}', ${idx})" 
+                                    title="Procedimiento paso a paso 🧠">🧠</button>
+                        </div>
                     </div>`;
             });
 
             sheetContainer.innerHTML = `
-                <div class="sheet-header-title" style="background: ${p.color}; color: ${headerTextColor}">
-                    ${activeTab.nombre}
+                <div class="sheet-header-title">
+                    <button class="sheet-header-btn-help" onclick="mostrarFormulasPlantilla('${p.id}')" title="Ver fórmulas usadas">?</button>
+                    <div class="sheet-header-name" style="background: ${p.color}; color: ${headerTextColor}">
+                        ${activeTab.nombre}
+                    </div>
+                    <button class="sheet-header-btn-close" onclick="closeTab(event, '${activeTab.id}')" title="Cerrar hoja">✕</button>
                 </div>
                 <div class="sheet-image-box" style="background: ${p.color}22;">
                     ${p.imagen ? `<img src="${p.imagen}" alt="${p.nombre}">` : `<span class="placeholder-text" style="color:${p.color}">Imagen</span>`}
@@ -132,17 +183,41 @@
                 </div>
             `;
 
-            // Setup floating delete button
-            let floatBtn = document.getElementById('floatingDeleteBtn');
-            if (!floatBtn) {
-                floatBtn = document.createElement('button');
-                floatBtn.id = 'floatingDeleteBtn';
-                floatBtn.className = 'floating-delete-btn';
-                floatBtn.innerHTML = '✕';
-                floatBtn.title = 'Eliminar hoja actual';
-                floatBtn.onclick = (e) => closeTab(e, activeTab.id);
-                document.body.appendChild(floatBtn);
-            } else {
-                floatBtn.onclick = (e) => closeTab(e, activeTab.id);
+            // Cleanup floating delete button if present from earlier versions
+            const oldFloatBtn = document.getElementById('floatingDeleteBtn');
+            if (oldFloatBtn) oldFloatBtn.remove();
+        }
+
+        /**
+         * Displays the internal formulas configured in the specified template
+         */
+        function mostrarFormulasPlantilla(plantillaId) {
+            const p = plantillas.find(x => x.id === plantillaId);
+            if (!p) return;
+
+            const titleEl = document.getElementById('formulasInfoTitle');
+            const listEl = document.getElementById('formulasInfoList');
+            const modalEl = document.getElementById('formulasInfoModal');
+
+            if (titleEl) titleEl.innerText = `Fórmulas usadas en "${p.nombre}"`;
+            
+            if (listEl) {
+                if (!p.formulas || p.formulas.length === 0) {
+                    listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 0.9rem;">Sin fórmulas registradas.</p>`;
+                } else {
+                    listEl.innerHTML = p.formulas.map(f => `
+                        <div style="background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 700; color: var(--text-main); font-size: 0.92rem;">${f.etiqueta || 'Fórmula'}</span>
+                            <code style="background: #e0e7ff; color: #3730a3; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-family: monospace; font-size: 0.95rem;">${f.formula}</code>
+                        </div>
+                    `).join('');
+                }
             }
+
+            if (modalEl) modalEl.classList.add('show');
+        }
+
+        function closeFormulasInfoModal() {
+            const modalEl = document.getElementById('formulasInfoModal');
+            if (modalEl) modalEl.classList.remove('show');
         }

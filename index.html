@@ -42,6 +42,7 @@
                 <div class="result-container">
                     <div class="result-box" id="result1"></div>
                     <button class="save-btn" id="saveBtn1" onclick="activateSaveMode(1)" title="Activar modo guardado">⬇</button>
+                    <button class="brain-btn disabled" id="brainBtn1" onclick="handleBrainClick(1)" title="Memoria 🧠">🧠</button>
                 </div>
             </div>
             
@@ -51,14 +52,36 @@
                 <div class="result-container">
                     <div class="result-box" id="result2"></div>
                     <button class="save-btn" id="saveBtn2" onclick="activateSaveMode(2)" title="Activar modo guardado">⬇</button>
+                    <button class="brain-btn disabled" id="brainBtn2" onclick="handleBrainClick(2)" title="Memoria 🧠">🧠</button>
                 </div>
             </div>
         </div>
         
         <!-- Slots & Side Controls Row -->
         <div class="slots-wrapper">
-            <!-- Stored Value Slots (A-H) -->
+            <!-- Stored Value Slots (X, Y, Z, A-G) -->
             <div class="slots-list">
+                <!-- Slot X -->
+                <div class="slot-item">
+                    <div class="slot-badge" id="badge-X" onclick="clickSlot('X')">X</div>
+                    <div class="slot-line-container">
+                        <input type="text" class="slot-input" id="input-val-X" oninput="updateSlotManually('X', this.value)" placeholder="...">
+                    </div>
+                </div>
+                <!-- Slot Y -->
+                <div class="slot-item">
+                    <div class="slot-badge" id="badge-Y" onclick="clickSlot('Y')">Y</div>
+                    <div class="slot-line-container">
+                        <input type="text" class="slot-input" id="input-val-Y" oninput="updateSlotManually('Y', this.value)" placeholder="...">
+                    </div>
+                </div>
+                <!-- Slot Z -->
+                <div class="slot-item">
+                    <div class="slot-badge" id="badge-Z" onclick="clickSlot('Z')">Z</div>
+                    <div class="slot-line-container">
+                        <input type="text" class="slot-input" id="input-val-Z" oninput="updateSlotManually('Z', this.value)" placeholder="...">
+                    </div>
+                </div>
                 <!-- Slot A -->
                 <div class="slot-item">
                     <div class="slot-badge" id="badge-A" onclick="clickSlot('A')">A</div>
@@ -106,13 +129,6 @@
                     <div class="slot-badge" id="badge-G" onclick="clickSlot('G')">G</div>
                     <div class="slot-line-container">
                         <input type="text" class="slot-input" id="input-val-G" oninput="updateSlotManually('G', this.value)" placeholder="...">
-                    </div>
-                </div>
-                <!-- Slot H -->
-                <div class="slot-item">
-                    <div class="slot-badge" id="badge-H" onclick="clickSlot('H')">H</div>
-                    <div class="slot-line-container">
-                        <input type="text" class="slot-input" id="input-val-H" oninput="updateSlotManually('H', this.value)" placeholder="...">
                     </div>
                 </div>
             </div>
@@ -236,6 +252,33 @@
                 <strong>Guardado en Slots:</strong> Escribe una fórmula, pulsa el botón verde (⬇) y haz clic en una letra parpadeante (A-H) para almacenar el valor.
             </p>
             <button class="modal-close-btn" onclick="closeHelpModal()">Entendido</button>
+        </div>
+    </div>
+
+    <!-- Formulas Info Modal -->
+    <div class="modal" id="formulasInfoModal">
+        <div class="modal-content">
+            <h2 id="formulasInfoTitle">Fórmulas Usadas</h2>
+            <div id="formulasInfoList" style="margin: 16px 0; display: flex; flex-direction: column; gap: 8px;">
+                <!-- Injected dynamically -->
+            </div>
+            <button class="modal-close-btn" onclick="closeFormulasInfoModal()">Entendido</button>
+        </div>
+    </div>
+
+    <!-- Procedimiento Paso a Paso Modal -->
+    <div class="modal" id="procedimientoModal">
+        <div class="modal-content" style="max-width: 550px; width: 92%;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--text-main); margin: 0;">🧠 Procedimiento Paso a Paso</h2>
+                <button onclick="closeProcedimientoModal()" style="border:none; background:none; font-size: 1.2rem; cursor:pointer; color: var(--text-muted);">✕</button>
+            </div>
+            
+            <div id="procedimientoContent" style="max-height: 60vh; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding: 10px 5px; scrollbar-width: thin;">
+                <!-- Injected dynamically -->
+            </div>
+
+            <button class="modal-close-btn" onclick="closeProcedimientoModal()" style="margin-top: 14px;">Entendido</button>
         </div>
     </div>
 

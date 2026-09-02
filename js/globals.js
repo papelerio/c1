@@ -2,7 +2,7 @@ let tabCounter = 0;
         
         // Slot values state
         const storedValues = {
-            A: '', B: '', C: '', D: '', E: '', F: '', G: '', H: ''
+            X: '', Y: '', Z: '', A: '', B: '', C: '', D: '', E: '', F: '', G: ''
         };
 
         // Save mode state
