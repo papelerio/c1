@@ -22,9 +22,20 @@
                     Object.assign(storedValues, storedSlots);
                 }
 
+                // 4. Load Virtual Keyboard State
+                const savedKbdState = await dbGetKbdState();
+                if (savedKbdState !== null) {
+                    isVirtualKbdEnabled = savedKbdState;
+                } else if (localStorage.getItem('virtual_kbd_enabled') === 'true') {
+                    isVirtualKbdEnabled = true;
+                }
+
                 // Render views
                 renderActiveTabs();
                 renderSlots();
+                if (typeof updateVirtualKbdUI === 'function') {
+                    updateVirtualKbdUI();
+                }
 
             } catch (err) {
                 console.warn('IndexedDB no disponible, usando datos de demo en memoria.', err);
@@ -32,5 +43,8 @@
                 activeTabs = [];
                 renderActiveTabs();
                 renderSlots();
+                if (typeof updateVirtualKbdUI === 'function') {
+                    updateVirtualKbdUI();
+                }
             }
         })();

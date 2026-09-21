@@ -104,6 +104,26 @@
             });
         }
 
+        function dbSaveKbdState(enabled) {
+            if (!db) return Promise.resolve();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_SLOTS, 'readwrite');
+                const req = tx.objectStore(STORE_SLOTS).put({ id: 'virtual_kbd_state', enabled: !!enabled });
+                req.onsuccess = () => resolve();
+                req.onerror = e => reject(e.target.error);
+            });
+        }
+
+        function dbGetKbdState() {
+            if (!db) return Promise.resolve(null);
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_SLOTS, 'readonly');
+                const req = tx.objectStore(STORE_SLOTS).get('virtual_kbd_state');
+                req.onsuccess = () => resolve(req.result !== undefined && req.result !== null ? req.result.enabled : null);
+                req.onerror = e => reject(e.target.error);
+            });
+        }
+
         function dbGetTombstones() {
             return new Promise((resolve, reject) => {
                 const tx = db.transaction(STORE_TOMBSTONES, 'readonly');

@@ -16,4 +16,8 @@ let tabCounter = 0;
         const helpModal = document.getElementById('helpModal');
         const plantillasOverlay = document.getElementById('plantillasOverlay');
 
+        // Virtual keyboard state
+        let isVirtualKbdEnabled = false;
+        let activeInput = null;
+
         // ==========================================

@@ -15,8 +15,14 @@
             try {
                 let sanitized = str.toLowerCase().replace(/\s/g, '');
 
-                // Normalizar coma decimal → punto (ej: 1,5 → 1.5)
-                sanitized = sanitized.replace(/,/g, '.');
+                // Normalizar coma decimal → punto (ej: 1,5 → 1.5) y símbolo π
+                sanitized = sanitized.replace(/,/g, '.').replace(/π/g, 'pi');
+
+                // Multiplicación implícita por paréntesis: 6(4+4) → 6*(4+4) y (2+2)(3+3) → (2+2)*(3+3)
+                sanitized = sanitized.replace(/([0-9.)])\s*(\()/g, '$1*$2');
+
+                // Multiplicación implícita número antes de letra slot: 6a → 6*a, 2x → 2*x
+                sanitized = sanitized.replace(/([0-9.])\s*([a-gxyz])(?![a-z0-9(])/gi, '$1*$2');
                 
                 // Preprocess trigonometry (Spanish names support)
                 sanitized = sanitized.replace(/(?<![a-z0-9.])(asen|acos|atan|sen|cos|tan)\(/gi, (match) => {
@@ -506,6 +512,10 @@
 
         function prepararExpresionParaProcedimiento(exprStr) {
             let limpia = exprStr.trim().replace(/\s/g, '').replace(/,/g, '.');
+
+            // Multiplicación implícita: 6(x+y) → 6*(x+y), número antes de letra → número*letra
+            limpia = limpia.replace(/([0-9.])\s*([a-gxyz])(?![a-z0-9(])/gi, '$1*$2');
+            limpia = limpia.replace(/([0-9.)])\s*(\()/g, '$1*$2');
             
             limpia = limpia.replace(/(?<![a-z0-9.])([a-gxyz])(?![a-z0-9])/gi, (match) => {
                 const slot = match.toUpperCase();
@@ -638,3 +648,195 @@
                 }
             }
         }
+
+        // ==========================================
+        // VIRTUAL KEYBOARD CONTROLS (TECLADO VIRTUAL ⌨️)
+        // ==========================================
+
+        function toggleVirtualKeyboard() {
+            isVirtualKbdEnabled = !isVirtualKbdEnabled;
+
+            // Save state to IndexedDB and localStorage
+            if (typeof dbSaveKbdState === 'function') {
+                dbSaveKbdState(isVirtualKbdEnabled);
+            }
+            localStorage.setItem('virtual_kbd_enabled', isVirtualKbdEnabled ? 'true' : 'false');
+
+            updateVirtualKbdUI();
+        }
+
+        function updateVirtualKbdUI() {
+            const btn = document.getElementById('virtualKbdToggleBtn');
+            const allInputs = document.querySelectorAll('input');
+
+            if (isVirtualKbdEnabled) {
+                if (btn) btn.classList.add('active');
+                allInputs.forEach(inp => inp.setAttribute('inputmode', 'none'));
+                
+                // Only show if an input currently has focus
+                const active = document.activeElement;
+                if (active && active.tagName === 'INPUT') {
+                    showVirtualKeyboardPanel();
+                } else {
+                    hideVirtualKeyboardPanel();
+                }
+            } else {
+                if (btn) btn.classList.remove('active');
+                allInputs.forEach(inp => inp.removeAttribute('inputmode'));
+                hideVirtualKeyboardPanel();
+            }
+        }
+
+        function scrollActiveInputIntoView() {
+            if (!activeInput || !document.body.contains(activeInput)) return;
+            setTimeout(() => {
+                const kbdPanel = document.getElementById('virtualKeyboardPanel');
+                const kbdHeight = (kbdPanel && kbdPanel.classList.contains('show')) ? kbdPanel.offsetHeight : 0;
+                const rect = activeInput.getBoundingClientRect();
+                const visibleHeight = window.innerHeight - kbdHeight;
+
+                if (rect.bottom > visibleHeight - 10 || rect.top < 10) {
+                    activeInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 80);
+        }
+
+        function showVirtualKeyboardPanel() {
+            const panel = document.getElementById('virtualKeyboardPanel');
+            if (panel && isVirtualKbdEnabled) {
+                panel.classList.add('show');
+                
+                const kbdHeight = panel.offsetHeight || 240;
+                document.body.style.paddingBottom = `${kbdHeight + 20}px`;
+
+                scrollActiveInputIntoView();
+            }
+        }
+
+        function hideVirtualKeyboardPanel() {
+            const panel = document.getElementById('virtualKeyboardPanel');
+            if (panel) {
+                panel.classList.remove('show');
+                document.body.style.paddingBottom = '0px';
+            }
+        }
+
+        function handleVirtualKeyPress(btn) {
+            if (!activeInput || !document.body.contains(activeInput)) {
+                activeInput = document.getElementById('calcInput1');
+            }
+            if (!activeInput) return;
+
+            activeInput.focus();
+
+            const val = btn.dataset.val;
+            const action = btn.dataset.action;
+
+            const start = activeInput.selectionStart ?? activeInput.value.length;
+            const end = activeInput.selectionEnd ?? activeInput.value.length;
+            const currentVal = activeInput.value;
+
+            if (action === 'backspace') {
+                if (start > 0 || start !== end) {
+                    if (start === end) {
+                        activeInput.value = currentVal.substring(0, start - 1) + currentVal.substring(end);
+                        activeInput.selectionStart = activeInput.selectionEnd = start - 1;
+                    } else {
+                        activeInput.value = currentVal.substring(0, start) + currentVal.substring(end);
+                        activeInput.selectionStart = activeInput.selectionEnd = start;
+                    }
+                }
+            } else if (val) {
+                activeInput.value = currentVal.substring(0, start) + val + currentVal.substring(end);
+                const newPos = start + val.length;
+                activeInput.selectionStart = activeInput.selectionEnd = newPos;
+            }
+
+            // Dispatch input event for real-time recalculation
+            activeInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        // Global Event Listeners for Focus, Blur and Virtual Keyboard Clicks
+        document.addEventListener('focusin', (e) => {
+            if (e.target && e.target.tagName === 'INPUT') {
+                activeInput = e.target;
+                if (isVirtualKbdEnabled) {
+                    e.target.setAttribute('inputmode', 'none');
+                    showVirtualKeyboardPanel();
+                    scrollActiveInputIntoView();
+                }
+            }
+        });
+
+        document.addEventListener('focusout', (e) => {
+            if (!isVirtualKbdEnabled) return;
+            // Short delay to check if focus moved to another input or virtual keyboard button
+            setTimeout(() => {
+                const focused = document.activeElement;
+                const isInput = focused && focused.tagName === 'INPUT';
+                const isKbd = focused && focused.closest && focused.closest('#virtualKeyboardPanel');
+                if (!isInput && !isKbd) {
+                    hideVirtualKeyboardPanel();
+                }
+            }, 100);
+        });
+
+        // Continuous Backspace Logic
+        let backspaceTimeout = null;
+        let backspaceInterval = null;
+
+        function startContinuousBackspace(btn) {
+            stopContinuousBackspace();
+            handleVirtualKeyPress(btn);
+
+            backspaceTimeout = setTimeout(() => {
+                backspaceInterval = setInterval(() => {
+                    handleVirtualKeyPress(btn);
+                }, 50);
+            }, 400);
+        }
+
+        function stopContinuousBackspace() {
+            if (backspaceTimeout) {
+                clearTimeout(backspaceTimeout);
+                backspaceTimeout = null;
+            }
+            if (backspaceInterval) {
+                clearInterval(backspaceInterval);
+                backspaceInterval = null;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const panel = document.getElementById('virtualKeyboardPanel');
+            if (panel) {
+                const handlePressStart = (e) => {
+                    const btn = e.target.closest('.vk-btn');
+                    if (btn) {
+                        e.preventDefault(); // Prevents input blur
+                        
+                        // Key pulse & glow animation
+                        btn.classList.remove('key-pulse');
+                        void btn.offsetWidth; // trigger reflow
+                        btn.classList.add('key-pulse');
+
+                        if (btn.dataset.action === 'backspace') {
+                            startContinuousBackspace(btn);
+                        } else {
+                            handleVirtualKeyPress(btn);
+                        }
+                    }
+                };
+
+                const handlePressEnd = () => {
+                    stopContinuousBackspace();
+                };
+
+                panel.addEventListener('mousedown', handlePressStart);
+                panel.addEventListener('touchstart', handlePressStart, { passive: false });
+
+                window.addEventListener('mouseup', handlePressEnd);
+                window.addEventListener('touchend', handlePressEnd);
+                window.addEventListener('touchcancel', handlePressEnd);
+            }
+        });

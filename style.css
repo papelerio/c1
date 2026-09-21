@@ -49,6 +49,7 @@
             color: var(--text-main);
             min-height: 100vh;
             padding-top: 60px; /* Space for the top bar and margins */
+            transition: padding-bottom 0.25s ease;
         }
 
         /* --- THE SHEET BAR ("BARRA DE TRABAJO") --- */
@@ -1507,4 +1508,204 @@
             color: #0f172a;
             display: inline-block;
             box-shadow: 0 4px 12px rgba(87, 255, 98, 0.35);
+        }
+
+        /* ==========================================
+           VIRTUAL KEYBOARD STYLES (TECLADO VIRTUAL)
+           ========================================== */
+
+        .extra-btn.kbd-btn {
+            background: #94a3b8;
+            color: #ffffff;
+        }
+
+        .extra-btn.kbd-btn.active {
+            background: #22c55e !important; /* Vivid green when active */
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+        }
+
+        .virtual-kbd-panel {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            width: 100%;
+            max-width: 520px;
+            background: #e2e8f0;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            box-shadow: 0 -6px 25px rgba(0, 0, 0, 0.25);
+            z-index: 99999;
+            padding: 10px 12px 14px 12px;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .virtual-kbd-panel.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .virtual-kbd-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2px 4px 8px 4px;
+            border-bottom: 1px solid #cbd5e1;
+            margin-bottom: 8px;
+        }
+
+        .virtual-kbd-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .virtual-kbd-close-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.1rem;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0 6px;
+            line-height: 1;
+        }
+
+        .virtual-kbd-body {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Slots Row (X, Y, Z, A-G) */
+        .virtual-kbd-slots-row {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 5px;
+        }
+
+        /* Buttons Base Style */
+        .vk-btn {
+            height: 42px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+            transition: transform 0.08s ease, filter 0.08s ease;
+            font-family: inherit;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .vk-btn:active {
+            transform: scale(0.95);
+            filter: brightness(0.9);
+        }
+
+        @keyframes vkKeyGlow {
+            0% {
+                transform: scale(0.92);
+                box-shadow: 0 0 14px rgba(99, 102, 241, 0.9), inset 0 0 10px rgba(255, 255, 255, 0.7);
+                filter: brightness(1.3);
+            }
+            50% {
+                transform: scale(1.04);
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.95), inset 0 0 14px rgba(255, 255, 255, 0.85);
+                filter: brightness(1.4);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+                filter: brightness(1);
+            }
+        }
+
+        .vk-btn.key-pulse {
+            animation: vkKeyGlow 0.22s ease-out forwards;
+        }
+
+        /* Dark Keys (X, Y, Z and Numpad 0-9) */
+        .vk-btn.vk-dark {
+            background: #27272a;
+            color: #ffffff;
+        }
+
+        /* Light/White Keys (A-G, operators, functions) */
+        .vk-btn.vk-light {
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* Main Keys Grid */
+        .virtual-kbd-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 3fr 1fr;
+            gap: 6px;
+        }
+
+        /* Column 1: Functions Column */
+        .vk-col-functions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .vk-split-btn {
+            display: flex;
+            height: 42px;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+
+        .vk-split-btn .vk-btn {
+            flex: 1;
+            height: 100%;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            font-size: 0.95rem;
+        }
+
+        .vk-split-btn .vk-split-left {
+            border-right: 1px solid #cbd5e1;
+        }
+
+        /* Numpad Grid (3x4) */
+        .vk-col-numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        /* Column 5: Operators */
+        .vk-col-operators {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .vk-backspace {
+            font-size: 1.2rem;
+            background: #ffffff;
+            color: #0f172a;
+        }
+
+        @media (max-width: 480px) {
+            .vk-btn {
+                height: 38px;
+                font-size: 0.95rem;
+            }
+            .vk-split-btn {
+                height: 38px;
+            }
         }

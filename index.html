@@ -136,6 +136,7 @@
             <!-- Extra controls on the right -->
             <div class="extra-buttons-column">
                 <button class="extra-btn info-btn" onclick="openHelpModal()">?</button>
+                <button class="extra-btn kbd-btn" id="virtualKbdToggleBtn" onclick="toggleVirtualKeyboard()" title="Teclado Virtual">⌨️</button>
                 <button class="extra-btn clear-btn" onclick="clearAllSlots()" title="Vaciar slots">🗑️</button>
             </div>
         </div>
@@ -279,6 +280,79 @@
             </div>
 
             <button class="modal-close-btn" onclick="closeProcedimientoModal()" style="margin-top: 14px;">Entendido</button>
+        </div>
+    </div>
+
+    <!-- VIRTUAL KEYBOARD PANEL -->
+    <div class="virtual-kbd-panel" id="virtualKeyboardPanel">
+        <div class="virtual-kbd-header">
+            <span class="virtual-kbd-title">Teclado Virtual ⌨️</span>
+            <button class="virtual-kbd-close-btn" onclick="hideVirtualKeyboardPanel()" title="Ocultar teclado">✕</button>
+        </div>
+        <div class="virtual-kbd-body">
+            <!-- Row 1: Slots / Variables (X, Y, Z, A-G) -->
+            <div class="virtual-kbd-slots-row">
+                <button class="vk-btn vk-dark" data-val="X">X</button>
+                <button class="vk-btn vk-dark" data-val="Y">Y</button>
+                <button class="vk-btn vk-dark" data-val="Z">Z</button>
+                <button class="vk-btn vk-light" data-val="A">A</button>
+                <button class="vk-btn vk-light" data-val="B">B</button>
+                <button class="vk-btn vk-light" data-val="C">C</button>
+                <button class="vk-btn vk-light" data-val="D">D</button>
+                <button class="vk-btn vk-light" data-val="E">E</button>
+                <button class="vk-btn vk-light" data-val="F">F</button>
+                <button class="vk-btn vk-light" data-val="G">G</button>
+            </div>
+
+            <!-- Main Keys Grid (5 Columns) -->
+            <div class="virtual-kbd-grid">
+                <!-- Column 1: Split Buttons (Dual Functions) -->
+                <div class="vk-col vk-col-functions">
+                    <div class="vk-split-btn">
+                        <button class="vk-btn vk-light vk-split-left" data-val="^">^</button>
+                        <button class="vk-btn vk-light vk-split-right" data-val="√">√</button>
+                    </div>
+                    <div class="vk-split-btn">
+                        <button class="vk-btn vk-light vk-split-left" data-val="π">π</button>
+                        <button class="vk-btn vk-light vk-split-right" data-val="tan(">tan</button>
+                    </div>
+                    <div class="vk-split-btn">
+                        <button class="vk-btn vk-light vk-split-left" data-val="sen(">sen</button>
+                        <button class="vk-btn vk-light vk-split-right" data-val="cos(">cos</button>
+                    </div>
+                    <div class="vk-split-btn">
+                        <button class="vk-btn vk-light vk-split-left" data-val="(">(</button>
+                        <button class="vk-btn vk-light vk-split-right" data-val=")">)</button>
+                    </div>
+                </div>
+
+                <!-- Columns 2, 3, 4: Numpad 3x4 (Dark Keys) -->
+                <div class="vk-col-numpad">
+                    <button class="vk-btn vk-dark" data-val="7">7</button>
+                    <button class="vk-btn vk-dark" data-val="8">8</button>
+                    <button class="vk-btn vk-dark" data-val="9">9</button>
+                    
+                    <button class="vk-btn vk-dark" data-val="4">4</button>
+                    <button class="vk-btn vk-dark" data-val="5">5</button>
+                    <button class="vk-btn vk-dark" data-val="6">6</button>
+                    
+                    <button class="vk-btn vk-dark" data-val="1">1</button>
+                    <button class="vk-btn vk-dark" data-val="2">2</button>
+                    <button class="vk-btn vk-dark" data-val="3">3</button>
+                    
+                    <button class="vk-btn vk-dark" data-val="0">0</button>
+                    <button class="vk-btn vk-dark" data-val=".">.</button>
+                    <button class="vk-btn vk-light" data-val="/">/</button>
+                </div>
+
+                <!-- Column 5: Operators (Light/White Keys) -->
+                <div class="vk-col vk-col-operators">
+                    <button class="vk-btn vk-light" data-val="*">*</button>
+                    <button class="vk-btn vk-light" data-val="-">-</button>
+                    <button class="vk-btn vk-light" data-val="+">+</button>
+                    <button class="vk-btn vk-light vk-backspace" data-action="backspace" title="Borrar">⌫</button>
+                </div>
+            </div>
         </div>
     </div>
 
