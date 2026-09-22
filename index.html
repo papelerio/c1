@@ -41,7 +41,14 @@
                 <input type="text" class="calc-input" id="calcInput1" placeholder="Fórmula 1 (Ej. 1 + 1)" oninput="runCalc(1)">
                 <div class="result-container">
                     <div class="result-box" id="result1"></div>
-                    <button class="save-btn" id="saveBtn1" onclick="activateSaveMode(1)" title="Activar modo guardado">⬇</button>
+                    <button class="save-btn" id="saveBtn1" 
+                            onmousedown="handleSaveBtnStart(event, 1)" 
+                            onmouseup="handleSaveBtnEnd(event, 1)" 
+                            onmouseleave="handleSaveBtnCancel(1)" 
+                            ontouchstart="handleSaveBtnStart(event, 1)" 
+                            ontouchend="handleSaveBtnEnd(event, 1)" 
+                            ontouchcancel="handleSaveBtnCancel(1)" 
+                            title="Pulsación corta: Guardar | Mantener presionado: Reemplazar por resultado">⬇</button>
                     <button class="brain-btn disabled" id="brainBtn1" onclick="handleBrainClick(1)" title="Memoria 🧠">🧠</button>
                 </div>
             </div>
@@ -51,7 +58,14 @@
                 <input type="text" class="calc-input" id="calcInput2" placeholder="Fórmula 2 (Ej. 2 * 2)" oninput="runCalc(2)">
                 <div class="result-container">
                     <div class="result-box" id="result2"></div>
-                    <button class="save-btn" id="saveBtn2" onclick="activateSaveMode(2)" title="Activar modo guardado">⬇</button>
+                    <button class="save-btn" id="saveBtn2" 
+                            onmousedown="handleSaveBtnStart(event, 2)" 
+                            onmouseup="handleSaveBtnEnd(event, 2)" 
+                            onmouseleave="handleSaveBtnCancel(2)" 
+                            ontouchstart="handleSaveBtnStart(event, 2)" 
+                            ontouchend="handleSaveBtnEnd(event, 2)" 
+                            ontouchcancel="handleSaveBtnCancel(2)" 
+                            title="Pulsación corta: Guardar | Mantener presionado: Reemplazar por resultado">⬇</button>
                     <button class="brain-btn disabled" id="brainBtn2" onclick="handleBrainClick(2)" title="Memoria 🧠">🧠</button>
                 </div>
             </div>

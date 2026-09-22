@@ -1,6 +1,16 @@
 // Active tabs list state
         let activeTabs = [];
 
+        function updateScrollShadows() {
+            if (!tabsWrapper) return;
+            const isScrollable = tabsWrapper.scrollWidth > tabsWrapper.clientWidth;
+            if (isScrollable) {
+                tabsWrapper.classList.add('is-scrollable');
+            } else {
+                tabsWrapper.classList.remove('is-scrollable');
+            }
+        }
+
         tabsWrapper.addEventListener('scroll', updateScrollShadows);
         window.addEventListener('resize', updateScrollShadows);
         setTimeout(updateScrollShadows, 100);

@@ -186,6 +186,65 @@
             }
         }
 
+        let saveBtnHoldTimer = null;
+        let isSaveBtnLongPress = false;
+        let lastSaveBtnTouchTime = 0;
+
+        function replaceInputWithResult(rowNum) {
+            const resultBox = document.getElementById(`result${rowNum}`);
+            const inputEl = document.getElementById(`calcInput${rowNum}`);
+            if (!resultBox || !inputEl) return;
+
+            const resultText = resultBox.innerText;
+            if (!resultText || resultText === 'Error') return;
+
+            inputEl.value = resultText;
+            runCalc(rowNum);
+
+            // Pulse animation on input
+            inputEl.classList.remove('input-replace-glow');
+            void inputEl.offsetWidth; // trigger reflow
+            inputEl.classList.add('input-replace-glow');
+        }
+
+        function handleSaveBtnStart(e, rowNum) {
+            if (e.type === 'touchstart') {
+                lastSaveBtnTouchTime = Date.now();
+            } else if (e.type === 'mousedown' && Date.now() - lastSaveBtnTouchTime < 500) {
+                return;
+            }
+
+            isSaveBtnLongPress = false;
+            if (saveBtnHoldTimer) clearTimeout(saveBtnHoldTimer);
+
+            saveBtnHoldTimer = setTimeout(() => {
+                isSaveBtnLongPress = true;
+                replaceInputWithResult(rowNum);
+            }, 400); // 400ms threshold for long press
+        }
+
+        function handleSaveBtnEnd(e, rowNum) {
+            if (saveBtnHoldTimer) {
+                clearTimeout(saveBtnHoldTimer);
+                saveBtnHoldTimer = null;
+            }
+
+            if (isSaveBtnLongPress) {
+                if (e && e.cancelable) e.preventDefault();
+                isSaveBtnLongPress = false;
+            } else {
+                activateSaveMode(rowNum);
+            }
+        }
+
+        function handleSaveBtnCancel(rowNum) {
+            if (saveBtnHoldTimer) {
+                clearTimeout(saveBtnHoldTimer);
+                saveBtnHoldTimer = null;
+            }
+            isSaveBtnLongPress = false;
+        }
+
         // Trigger Save Mode
         function activateSaveMode(rowNum) {
             const resultBox = document.getElementById(`result${rowNum}`);
@@ -312,6 +371,15 @@
             }
         }
 
+        function isUnaryMinus(str, minusIndex) {
+            if (minusIndex <= 0) return true;
+            let p = minusIndex - 1;
+            while (p >= 0 && /\s/.test(str[p])) p--;
+            if (p < 0) return true;
+            const prevChar = str[p];
+            return /[+\-*/^√()]/.test(prevChar);
+        }
+
         function findAllHighestPriorityOps(str) {
             function collectMatches(regex) {
                 let results = [];
@@ -320,7 +388,16 @@
                 while ((m = gRegex.exec(str)) !== null) {
                     let fullText = m[0];
                     let startIndex = m.index;
-                    let endIndex = m.index + fullText.length;
+
+                    // If match starts with -, check if it's binary subtraction
+                    if (fullText.startsWith('-') && !isUnaryMinus(str, startIndex)) {
+                        fullText = fullText.substring(1).trimStart();
+                        startIndex = m.index + (m[0].length - fullText.length);
+                    }
+
+                    if (!fullText) continue;
+
+                    let endIndex = startIndex + fullText.length;
                     let res = evalSubExpr(fullText);
                     results.push({ startIndex, endIndex, fullText, partialResult: res });
                 }
@@ -339,8 +416,14 @@
             let allMulDivTargets = [];
             const gMulDiv = new RegExp(opRegex2Full.source, 'g');
             while ((mFull = gMulDiv.exec(str)) !== null) {
-                const chainStr = mFull[0];
-                const chainStart = mFull.index;
+                let chainStr = mFull[0];
+                let chainStart = mFull.index;
+
+                // If chainStr starts with `-` but it's preceded by a digit/parens, `-` is binary subtraction!
+                if (chainStr.startsWith('-') && !isUnaryMinus(str, chainStart)) {
+                    chainStr = chainStr.substring(1).trimStart();
+                    chainStart = mFull.index + (mFull[0].length - chainStr.length);
+                }
 
                 // Split chain into individual tokens: numbers and operators
                 const tokenRegex = /(-?[0-9.]+|[*/])/g;
@@ -466,9 +549,15 @@
                 nextExpr += normalText;
             }
 
-            nextExpr = nextExpr.replace(/\+\+/g, '+')
-                               .replace(/\+-/g, '-')
-                               .replace(/--/g, '+');
+            // Normalize all sign combinations thoroughly (++, +-, -+, --)
+            let oldExpr;
+            do {
+                oldExpr = nextExpr;
+                nextExpr = nextExpr.replace(/\+\+/g, '+')
+                                   .replace(/\+-/g, '-')
+                                   .replace(/-\+/g, '-')
+                                   .replace(/--/g, '+');
+            } while (nextExpr !== oldExpr);
 
             return { chunks, nextExpr };
         }
